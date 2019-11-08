@@ -125,6 +125,8 @@ private slots:
 
     void on_timeInnterval_lineEdit_returnPressed();
 
+    void on_portScan_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

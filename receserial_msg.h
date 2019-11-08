@@ -3,10 +3,12 @@
 
 #include <QObject>
 #include <QtSerialPort/QSerialPort>
+#include<QtSerialPort/QSerialPortInfo>
 #include<QDebug>
 #include<QDataStream>
 #include<vector>
 #include<QTimer>
+#include<QList>
 
 using namespace std;
 

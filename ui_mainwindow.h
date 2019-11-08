@@ -60,7 +60,7 @@ public:
     QComboBox *stopBitsBox;
     QLabel *label_9;
     QComboBox *parityBox;
-    QPushButton *pushButton;
+    QPushButton *portScan_pushButton;
     QPushButton *openPort_pushButton;
     QGroupBox *groupBox_4;
     QGridLayout *gridLayout_5;
@@ -227,10 +227,10 @@ public:
 
         formLayout->setWidget(4, QFormLayout::FieldRole, parityBox);
 
-        pushButton = new QPushButton(groupBox_3);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
+        portScan_pushButton = new QPushButton(groupBox_3);
+        portScan_pushButton->setObjectName(QStringLiteral("portScan_pushButton"));
 
-        formLayout->setWidget(5, QFormLayout::LabelRole, pushButton);
+        formLayout->setWidget(5, QFormLayout::LabelRole, portScan_pushButton);
 
         openPort_pushButton = new QPushButton(groupBox_3);
         openPort_pushButton->setObjectName(QStringLiteral("openPort_pushButton"));
@@ -670,7 +670,7 @@ public:
         label_11->setText(QApplication::translate("MainWindow", "DataBits\357\274\232", Q_NULLPTR));
         label_7->setText(QApplication::translate("MainWindow", "StopBits\357\274\232", Q_NULLPTR));
         label_9->setText(QApplication::translate("MainWindow", "Parity\357\274\232", Q_NULLPTR));
-        pushButton->setText(QApplication::translate("MainWindow", "PortScan", Q_NULLPTR));
+        portScan_pushButton->setText(QApplication::translate("MainWindow", "PortScan", Q_NULLPTR));
         openPort_pushButton->setText(QApplication::translate("MainWindow", "OpenPort", Q_NULLPTR));
         groupBox_4->setTitle(QApplication::translate("MainWindow", "Result:", Q_NULLPTR));
         label_12->setText(QApplication::translate("MainWindow", "CurrentDistance:(mm)", Q_NULLPTR));

@@ -66,6 +66,21 @@ void MainWindow::stopTimer()
 }
 
 
+//查找可用的端口
+void MainWindow::on_portScan_pushButton_clicked()
+{
+    QStringList m_serialPortName;
+    foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts())
+    {
+        m_serialPortName << info.portName();
+        qDebug()<<"serialPortName:"<<info.portName();
+    }
+    ui->serialPortInfoListBox->clear();
+    ui->serialPortInfoListBox->addItems(m_serialPortName);
+    QMessageBox::information(NULL,QStringLiteral("提示"),QStringLiteral("可用端口检测完毕！"));
+}
+
+
 //串口初始化
 void MainWindow::initSerial()
 {
@@ -88,16 +103,32 @@ void MainWindow::initSerial()
     int baudRateBox_ = line[1].toInt();   //波特率
 
 
-    QStringList comList;//串口号
-    comList.clear();
-    comList<<"COM1"<<"COM2"<<"COM3"<<"COM4"<<"COM5"<<"COM6"
-          <<"COM7"<<"COM8"<<"COM9"<<"COM10"<<"COM11"<<"COM12"
-         <<"COM13"<<"COM14"<<"COM15"<<"COM16"<<"COM17"<<"COM18"
-        <<"COM19"<<"COM20"<<"COM21"<<"COM22"<<"COM23"<<"COM24"
-       <<"COM25"<<"COM26"<<"COM27"<<"COM28"<<"COM28"<<"COM29"<<"COM30";
+//    QStringList comList;//串口号
+//    comList.clear();
+//    comList<<"COM1"<<"COM2"<<"COM3"<<"COM4"<<"COM5"<<"COM6"
+//          <<"COM7"<<"COM8"<<"COM9"<<"COM10"<<"COM11"<<"COM12"
+//         <<"COM13"<<"COM14"<<"COM15"<<"COM16"<<"COM17"<<"COM18"
+//        <<"COM19"<<"COM20"<<"COM21"<<"COM22"<<"COM23"<<"COM24"
+//       <<"COM25"<<"COM26"<<"COM27"<<"COM28"<<"COM28"<<"COM29"<<"COM30";
+
+//    ui->serialPortInfoListBox->setCurrentIndex(numSeri_);
+
+    int num = 0;
+    QStringList m_serialPortName;
+    foreach(const QSerialPortInfo &info,QSerialPortInfo::availablePorts())
+    {
+        num++;
+        m_serialPortName << info.portName();
+        qDebug()<<"serialPortName:"<<info.portName();
+    }
     ui->serialPortInfoListBox->clear();
-    ui->serialPortInfoListBox->addItems(comList);
-    ui->serialPortInfoListBox->setCurrentIndex(numSeri_);
+    ui->serialPortInfoListBox->addItems(m_serialPortName);
+    if(numSeri_>num)
+        ui->serialPortInfoListBox->setCurrentIndex(0);
+    else
+        ui->serialPortInfoListBox->setCurrentIndex(numSeri_);
+
+
 
     ui->baudRateBox->addItem(QStringLiteral("9600"), QSerialPort::Baud9600);
     ui->baudRateBox->addItem(QStringLiteral("19200"), QSerialPort::Baud19200);
@@ -485,5 +516,6 @@ void MainWindow::on_clear_pushButton_clicked()
     ui->ResultHistory_textEdit->clear();
     Count_num = 0;
 }
+
 
 
