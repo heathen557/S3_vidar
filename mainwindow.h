@@ -54,7 +54,9 @@ public:
 
     bool isLinked;
 
-    QTimer showTimer;
+    QTimer showTimer;                  //暂定为30ms
+
+    QTimer oneSecondTimer;            //1秒钟的定时器
 
     QString DistanceStrCurrent;        //当前距离
 
@@ -71,6 +73,14 @@ public:
     bool isTranslateFlag;     //解析数据 还是直接显示16进制的 切换标识 true：则对数据进行解析
 
     int Count_num;            //显示记录的条数
+
+    int Count_num_lastSec;    //上一秒钟收到记录的条数
+
+    bool isTimelySaveFlag;
+
+    int tumlySaveCnt;
+
+    int generateCnt;
 
 private slots:
     void on_save_pushButton_clicked();
@@ -106,6 +116,14 @@ private slots:
     void stopTimer();
 
     void on_selectSavePathtoolButton_clicked();
+
+    void oneSecondTimer_slot();
+
+    void on_TimingSave_checkBox_clicked();
+
+    void on_clear_pushButton_clicked();
+
+    void on_timeInnterval_lineEdit_returnPressed();
 
 private:
     Ui::MainWindow *ui;

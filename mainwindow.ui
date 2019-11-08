@@ -44,7 +44,7 @@ font: 10pt &quot;黑体&quot;;}</string>
           <x>0</x>
           <y>0</y>
           <width>210</width>
-          <height>718</height>
+          <height>724</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -59,7 +59,7 @@ font: 10pt &quot;黑体&quot;;}</string>
           <widget class="QGroupBox" name="groupBox_3">
            <property name="styleSheet">
             <string notr="true">.QGroupBox
-{font: 10pt &quot;黑体&quot;;}</string>
+{font: 10pt &quot;Times New Roman&quot;;}</string>
            </property>
            <property name="title">
             <string>SerialPort Settings:</string>
@@ -140,7 +140,7 @@ font: 10pt &quot;黑体&quot;;}</string>
           <widget class="QGroupBox" name="groupBox_4">
            <property name="styleSheet">
             <string notr="true">.QGroupBox
-{font: 10pt &quot;黑体&quot;;}</string>
+{font: 10pt &quot;Times New Roman&quot;;}</string>
            </property>
            <property name="title">
             <string>Result:</string>
@@ -199,7 +199,7 @@ font: 10pt &quot;黑体&quot;;}</string>
           <widget class="QGroupBox" name="groupBox_5">
            <property name="styleSheet">
             <string notr="true">.QGroupBox
-{font: 10pt &quot;黑体&quot;;}</string>
+{font: 10pt &quot;Times New Roman&quot;;}</string>
            </property>
            <property name="title">
             <string>Data Phase:</string>
@@ -240,7 +240,7 @@ font: 10pt &quot;黑体&quot;;}</string>
           <widget class="QGroupBox" name="groupBox_6">
            <property name="styleSheet">
             <string notr="true">.QGroupBox
-{font: 10pt &quot;黑体&quot;;}</string>
+{font: 10pt &quot;Times New Roman&quot;;}</string>
            </property>
            <property name="title">
             <string>Disp Set:</string>
@@ -392,7 +392,7 @@ font: 10pt &quot;黑体&quot;;}</string>
       <widget class="QGroupBox" name="groupBox">
        <property name="styleSheet">
         <string notr="true">.QGroupBox
-{font: 10pt &quot;黑体&quot;;}</string>
+{font: 10pt &quot;Times New Roman&quot;;}</string>
        </property>
        <property name="title">
         <string>Result History</string>
@@ -409,6 +409,12 @@ font: 10pt &quot;黑体&quot;;}</string>
           </item>
           <item>
            <widget class="QLabel" name="HistoryData_label">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>0</string>
             </property>
@@ -435,10 +441,19 @@ font: 10pt &quot;黑体&quot;;}</string>
             <property name="text">
              <string>DPS:</string>
             </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="DPS_label">
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="text">
              <string>0</string>
             </property>
@@ -473,7 +488,11 @@ font: 10pt &quot;黑体&quot;;}</string>
          </layout>
         </item>
         <item row="1" column="0">
-         <widget class="QTextEdit" name="ResultHistory_textEdit"/>
+         <widget class="QTextEdit" name="ResultHistory_textEdit">
+          <property name="styleSheet">
+           <string notr="true">font: 9pt &quot;Times New Roman&quot;;</string>
+          </property>
+         </widget>
         </item>
         <item row="2" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1,7">
@@ -521,7 +540,7 @@ font: 10pt &quot;黑体&quot;;}</string>
          </layout>
         </item>
         <item row="4" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,2,1,5">
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,2,1,5,0">
           <item>
            <widget class="QPushButton" name="save_pushButton">
             <property name="text">
@@ -530,9 +549,12 @@ font: 10pt &quot;黑体&quot;;}</string>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="timeInnterval_label">
             <property name="text">
              <string>time innterval(S):</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
@@ -559,6 +581,13 @@ font: 10pt &quot;黑体&quot;;}</string>
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QPushButton" name="clear_pushButton">
+            <property name="text">
+             <string>clear</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
@@ -566,7 +595,7 @@ font: 10pt &quot;黑体&quot;;}</string>
       <widget class="QGroupBox" name="groupBox_2">
        <property name="styleSheet">
         <string notr="true">.QGroupBox
-{font: 10pt &quot;黑体&quot;;}</string>
+{font: 10pt &quot;Times New Roman&quot;;}</string>
        </property>
        <property name="title">
         <string>Plot</string>

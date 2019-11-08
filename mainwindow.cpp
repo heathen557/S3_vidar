@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->groupBox_9->setVisible(false);
 
     ui->savePath_lineEdit->setReadOnly(true);
+    ui->timeInnterval_label->setEnabled(false);
+    ui->timeInnterval_lineEdit->setEnabled(false);
 
     receSerial_Obj = new receSerial_msg;;
     receSerialThread = new QThread;
@@ -36,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
     isLinked = false;
     isTranslateFlag = true;
     Count_num = 0;
+    Count_num_lastSec = 0;
+    isTimelySaveFlag = false;
 }
 
 void MainWindow::initConnect()
@@ -45,17 +49,20 @@ void MainWindow::initConnect()
 
     //刷新定时器 信号与槽的连接
     connect(&showTimer,SIGNAL(timeout()),this,SLOT(showTimerSlot()));
+    connect(&oneSecondTimer,SIGNAL(timeout),this,SLOT(oneSecondTimer_slot()));
 
 }
 
 void MainWindow::beginTimer()
 {
-    showTimer.start(30);
+    showTimer.start(50);
+    oneSecondTimer.start(1000);
 }
 
 void MainWindow::stopTimer()
 {
     showTimer.stop();
+    oneSecondTimer.stop();
 }
 
 
@@ -373,10 +380,6 @@ void MainWindow::on_selectSavePathtoolButton_clicked()
     else
     {
         file_path.append("/");
-        QDateTime currTime = QDateTime::currentDateTime();
-        QString fileName = currTime.toString("yyyy_MM_dd_hh_mm_ss");
-        fileName.append(".txt");
-        file_path.append(fileName);
         qDebug() << file_path << endl;
         ui->savePath_lineEdit->setText(file_path);
     }
@@ -390,37 +393,97 @@ void MainWindow::on_save_pushButton_clicked()
     QString text = ui->ResultHistory_textEdit->toPlainText();
 
     QString sFilePath = ui->savePath_lineEdit->text() ;
+    QDateTime currTime = QDateTime::currentDateTime();
+    QString fileName = currTime.toString("yyyyMMdd_hh_mm_ss");
+    fileName.append(".txt");
+    sFilePath.append(fileName);     //加上文件名
+
+
     QFile file(sFilePath);
     file.open(QIODevice::WriteOnly|QIODevice::Text);
     QTextStream out(&file);
     out<<text.toLocal8Bit()<<endl;
     file.close();
+
+    QString strMsg = QStringLiteral("已保存在指定路径下，文件名为：") + fileName;
+    QMessageBox::information(NULL,QStringLiteral("提示"),strMsg);
 }
 
 
+//每秒钟刷新的槽函数
+void MainWindow::oneSecondTimer_slot()
+{
+    int dps = Count_num - Count_num_lastSec;
+    if(dps > 0)
+    {
+        ui->DPS_label->setText(QString::number(dps));
+    }else
+    {
+        ui->DPS_label->setText("0");
+    }
+    Count_num_lastSec = Count_num;
 
 
+    if(isTimelySaveFlag)     //60s存一帧数据
+    {
+        tumlySaveCnt--;
+        if(0 == tumlySaveCnt)
+        {
+            tumlySaveCnt = ui->timeInnterval_lineEdit->text().toInt();
+            QString textBox_Data = ui->ResultHistory_textEdit->toPlainText();
+            if(!textBox_Data.isEmpty())
+            {
+                QString filePathName = ui->savePath_lineEdit->text() +"AutoSave" +QString::number(generateCnt)+".txt";  //文件名
+                QFile file(filePathName);
+                file.open(QIODevice::WriteOnly|QIODevice::Text);
+                QTextStream out(&file);
+                out<<textBox_Data.toLocal8Bit()<<endl;
+                file.close();
+
+                generateCnt++;
+                ui->ResultHistory_textEdit->clear(); //清空控件上的数据
+            }
+
+        }
+
+    }
+}
 
 
+//TimeingSave_checkBox的点击的槽函数
+void MainWindow::on_TimingSave_checkBox_clicked()
+{
+    if(ui->TimingSave_checkBox->isChecked())
+    {
+        isTimelySaveFlag = true;
+        ui->timeInnterval_label->setEnabled(true);
+        ui->timeInnterval_lineEdit->setEnabled(true);
+        tumlySaveCnt = ui->timeInnterval_lineEdit->text().toInt();
+        generateCnt = 0;
+        ui->save_pushButton->setEnabled(false);
+    }
+    else
+    {
+        isTimelySaveFlag = false;
+        ui->timeInnterval_label->setEnabled(false);
+        ui->timeInnterval_lineEdit->setEnabled(false);
+        ui->save_pushButton->setEnabled(true);
+    }
 
+}
 
+//改变tumlySaveCnt的槽函数
+void MainWindow::on_timeInnterval_lineEdit_returnPressed()
+{
+    tumlySaveCnt = ui->timeInnterval_lineEdit->text().toInt();
+}
 
+//clear清空函数
+void MainWindow::on_clear_pushButton_clicked()
+{
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    ui->ResultHistory_textEdit->clear();
+    Count_num = 0;
+}
 
 

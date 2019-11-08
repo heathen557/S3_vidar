@@ -116,9 +116,10 @@ public:
     QToolButton *selectSavePathtoolButton;
     QHBoxLayout *horizontalLayout_4;
     QPushButton *save_pushButton;
-    QLabel *label_6;
+    QLabel *timeInnterval_label;
     QLineEdit *timeInnterval_lineEdit;
     QSpacerItem *horizontalSpacer_6;
+    QPushButton *clear_pushButton;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_2;
     QHBoxLayout *horizontalLayout_2;
@@ -158,7 +159,7 @@ public:
 "font: 10pt \"\351\273\221\344\275\223\";}"));
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
-        page->setGeometry(QRect(0, 0, 210, 718));
+        page->setGeometry(QRect(0, 0, 210, 724));
         page->setStyleSheet(QString::fromUtf8(".QWidget{\n"
 "font: 10pt \"\351\273\221\344\275\223\";}"));
         gridLayout_11 = new QGridLayout(page);
@@ -167,8 +168,8 @@ public:
         gridLayout_11->setObjectName(QStringLiteral("gridLayout_11"));
         groupBox_3 = new QGroupBox(page);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
-        groupBox_3->setStyleSheet(QString::fromUtf8(".QGroupBox\n"
-"{font: 10pt \"\351\273\221\344\275\223\";}"));
+        groupBox_3->setStyleSheet(QLatin1String(".QGroupBox\n"
+"{font: 10pt \"Times New Roman\";}"));
         gridLayout_4 = new QGridLayout(groupBox_3);
         gridLayout_4->setSpacing(6);
         gridLayout_4->setContentsMargins(11, 11, 11, 11);
@@ -244,8 +245,8 @@ public:
 
         groupBox_4 = new QGroupBox(page);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
-        groupBox_4->setStyleSheet(QString::fromUtf8(".QGroupBox\n"
-"{font: 10pt \"\351\273\221\344\275\223\";}"));
+        groupBox_4->setStyleSheet(QLatin1String(".QGroupBox\n"
+"{font: 10pt \"Times New Roman\";}"));
         gridLayout_5 = new QGridLayout(groupBox_4);
         gridLayout_5->setSpacing(6);
         gridLayout_5->setContentsMargins(11, 11, 11, 11);
@@ -291,8 +292,8 @@ public:
 
         groupBox_5 = new QGroupBox(page);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
-        groupBox_5->setStyleSheet(QString::fromUtf8(".QGroupBox\n"
-"{font: 10pt \"\351\273\221\344\275\223\";}"));
+        groupBox_5->setStyleSheet(QLatin1String(".QGroupBox\n"
+"{font: 10pt \"Times New Roman\";}"));
         gridLayout_6 = new QGridLayout(groupBox_5);
         gridLayout_6->setSpacing(6);
         gridLayout_6->setContentsMargins(11, 11, 11, 11);
@@ -324,8 +325,8 @@ public:
 
         groupBox_6 = new QGroupBox(page);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
-        groupBox_6->setStyleSheet(QString::fromUtf8(".QGroupBox\n"
-"{font: 10pt \"\351\273\221\344\275\223\";}"));
+        groupBox_6->setStyleSheet(QLatin1String(".QGroupBox\n"
+"{font: 10pt \"Times New Roman\";}"));
         gridLayout_9 = new QGridLayout(groupBox_6);
         gridLayout_9->setSpacing(6);
         gridLayout_9->setContentsMargins(11, 11, 11, 11);
@@ -434,8 +435,8 @@ public:
         splitter->addWidget(toolBox);
         groupBox = new QGroupBox(splitter);
         groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setStyleSheet(QString::fromUtf8(".QGroupBox\n"
-"{font: 10pt \"\351\273\221\344\275\223\";}"));
+        groupBox->setStyleSheet(QLatin1String(".QGroupBox\n"
+"{font: 10pt \"Times New Roman\";}"));
         gridLayout = new QGridLayout(groupBox);
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);
@@ -450,6 +451,7 @@ public:
 
         HistoryData_label = new QLabel(groupBox);
         HistoryData_label->setObjectName(QStringLiteral("HistoryData_label"));
+        HistoryData_label->setMinimumSize(QSize(70, 0));
         HistoryData_label->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(HistoryData_label);
@@ -460,11 +462,13 @@ public:
 
         label_3 = new QLabel(groupBox);
         label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(label_3);
 
         DPS_label = new QLabel(groupBox);
         DPS_label->setObjectName(QStringLiteral("DPS_label"));
+        DPS_label->setMinimumSize(QSize(50, 0));
         DPS_label->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(DPS_label);
@@ -491,6 +495,7 @@ public:
 
         ResultHistory_textEdit = new QTextEdit(groupBox);
         ResultHistory_textEdit->setObjectName(QStringLiteral("ResultHistory_textEdit"));
+        ResultHistory_textEdit->setStyleSheet(QStringLiteral("font: 9pt \"Times New Roman\";"));
 
         gridLayout->addWidget(ResultHistory_textEdit, 1, 0, 1, 1);
 
@@ -541,10 +546,11 @@ public:
 
         horizontalLayout_4->addWidget(save_pushButton);
 
-        label_6 = new QLabel(groupBox);
-        label_6->setObjectName(QStringLiteral("label_6"));
+        timeInnterval_label = new QLabel(groupBox);
+        timeInnterval_label->setObjectName(QStringLiteral("timeInnterval_label"));
+        timeInnterval_label->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        horizontalLayout_4->addWidget(label_6);
+        horizontalLayout_4->addWidget(timeInnterval_label);
 
         timeInnterval_lineEdit = new QLineEdit(groupBox);
         timeInnterval_lineEdit->setObjectName(QStringLiteral("timeInnterval_lineEdit"));
@@ -556,6 +562,11 @@ public:
 
         horizontalLayout_4->addItem(horizontalSpacer_6);
 
+        clear_pushButton = new QPushButton(groupBox);
+        clear_pushButton->setObjectName(QStringLiteral("clear_pushButton"));
+
+        horizontalLayout_4->addWidget(clear_pushButton);
+
         horizontalLayout_4->setStretch(0, 1);
         horizontalLayout_4->setStretch(1, 2);
         horizontalLayout_4->setStretch(2, 1);
@@ -566,8 +577,8 @@ public:
         splitter->addWidget(groupBox);
         groupBox_2 = new QGroupBox(splitter);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setStyleSheet(QString::fromUtf8(".QGroupBox\n"
-"{font: 10pt \"\351\273\221\344\275\223\";}"));
+        groupBox_2->setStyleSheet(QLatin1String(".QGroupBox\n"
+"{font: 10pt \"Times New Roman\";}"));
         gridLayout_2 = new QGridLayout(groupBox_2);
         gridLayout_2->setSpacing(6);
         gridLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -697,8 +708,9 @@ public:
         TimingSave_checkBox->setText(QApplication::translate("MainWindow", "Timing Save", Q_NULLPTR));
         selectSavePathtoolButton->setText(QApplication::translate("MainWindow", "...", Q_NULLPTR));
         save_pushButton->setText(QApplication::translate("MainWindow", "Save", Q_NULLPTR));
-        label_6->setText(QApplication::translate("MainWindow", "time innterval(S):", Q_NULLPTR));
+        timeInnterval_label->setText(QApplication::translate("MainWindow", "time innterval(S):", Q_NULLPTR));
         timeInnterval_lineEdit->setText(QApplication::translate("MainWindow", "60", Q_NULLPTR));
+        clear_pushButton->setText(QApplication::translate("MainWindow", "clear", Q_NULLPTR));
         groupBox_2->setTitle(QApplication::translate("MainWindow", "Plot", Q_NULLPTR));
         TOF_radioButton->setText(QApplication::translate("MainWindow", "TOF", Q_NULLPTR));
         Histogram_radioButton->setText(QApplication::translate("MainWindow", "Histogram", Q_NULLPTR));
