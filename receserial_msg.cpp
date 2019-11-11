@@ -1,5 +1,6 @@
 ﻿#include "receserial_msg.h"
 
+extern Settings currentSettings;
 receSerial_msg::receSerial_msg(QObject *parent) : QObject(parent)
 {
 
@@ -9,11 +10,45 @@ receSerial_msg::receSerial_msg(QObject *parent) : QObject(parent)
     tof_offset = 0;
     isTranslateFlag = true;
     peak_disp_mode = true;
+    withOrNotPeakFlag = true;       //默认是带peak的
+    serial = NULL;
 
-    serial = new QSerialPort(this);
-    connect(serial, SIGNAL(readyRead()), this, SLOT(readDataSlot()),Qt::DirectConnection);
 
 }
+
+void receSerial_msg::openOrCloseSerial_slot(bool flag)
+{
+    if(NULL == serial)
+    {
+        serial = new QSerialPort(this);
+        connect(serial, SIGNAL(readyRead()), this, SLOT(readDataSlot()),Qt::DirectConnection);
+    }
+
+    if(true == flag)   //打开串口
+    {
+        serial->setPortName(currentSettings.name);
+        serial->setBaudRate(currentSettings.baudRate);
+        serial->setDataBits(currentSettings.dataBits);
+        serial->setParity(currentSettings.parity);
+        serial->setStopBits(currentSettings.stopBits);
+        serial->setFlowControl(currentSettings.flowControl);
+        if(serial->open(QIODevice::ReadWrite))
+        {
+            qDebug()<<"serial open success!!";
+            emit returnLinkInfo_signal("open",true);
+        }else{
+            qDebug()<<"serial open error";
+            emit returnLinkInfo_signal("open",false);
+        }
+    }else              //关闭串口
+    {
+        serial->close();
+        emit returnLinkInfo_signal("close",true);
+    }
+
+}
+
+
 
 void receSerial_msg::readDataSlot()
 {
@@ -40,7 +75,7 @@ void receSerial_msg::readDataSlot()
         }
         strHex = strHex.toUpper();
         qDebug()<<" strHex = "<<strHex;
-        return;
+//        return;
 
         m_buffer.append(strHex);
         int totallen = m_buffer.size();
@@ -81,7 +116,7 @@ void receSerial_msg::readDataSlot()
                QString s4=angle_str_[3];
                QString angle_str = s3+s4+s1+s2;
                int TOF = angle_str.toInt(NULL,16);
-    //           qDebug()<<"角度"<<QString::number(angleInt);
+    //           qDebug()<<"TOF = "<<TOF;
 
                //获取距离信息(mm)
                QString distance_str_ = single_Data.mid(18,5);
@@ -92,7 +127,7 @@ void receSerial_msg::readDataSlot()
                s4=distance_str_[3];
                QString distance_str = s3+s4+s1+s2;
                int PEAK = distance_str.toInt(NULL,16);
-    //           qDebug()<<"距离"<<QString::number(distanceInt);
+    //           qDebug()<<"PEAK = "<<PEAK;
 
 
                //sample_range 样本的个数
@@ -155,6 +190,9 @@ void receSerial_msg::readDataSlot()
                }
 
 
+               emit dealedData_signal(DistanceStrCurrent,PlotData_vector,StatisticData_vector);            //发送信号 用于显示主界面的三个label数据
+               emit showResultMsg_signal(DistanceStr);                                                     //发送用于界面显示的数据  显示TOF或者PEAK 或者16进制数据
+               DistanceStr.clear();
 
                m_buffer = m_buffer.right(totallen - 27);   //一帧处理完毕 减去该帧的长度
                totallen = m_buffer.size();
@@ -164,6 +202,8 @@ void receSerial_msg::readDataSlot()
         else   //直接打印16进制的数据
         {
                 DistanceStr.append(m_buffer);
+                emit showResultMsg_signal(DistanceStr);                                                   //发送用于界面显示的数据  显示TOF或者PEAK 或者16进制数据
+                DistanceStr.clear();                                                                      //清空
                 m_buffer.clear();
                 totallen = m_buffer.size();
         }

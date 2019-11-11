@@ -35,6 +35,7 @@
 #include <QtWidgets/QToolButton>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -127,7 +128,7 @@ public:
     QSpacerItem *horizontalSpacer_3;
     QRadioButton *Histogram_radioButton;
     QSpacerItem *horizontalSpacer_4;
-    QWidget *widget;
+    QCustomPlot *TOF_widget;
     QHBoxLayout *horizontalLayout_5;
     QPushButton *savePicture_pushButton;
     QSpacerItem *horizontalSpacer_7;
@@ -155,13 +156,13 @@ public:
         toolBox = new QToolBox(splitter);
         toolBox->setObjectName(QStringLiteral("toolBox"));
         toolBox->setMinimumSize(QSize(220, 0));
-        toolBox->setStyleSheet(QString::fromUtf8(".QToolBox{\n"
-"font: 10pt \"\351\273\221\344\275\223\";}"));
+        toolBox->setStyleSheet(QLatin1String(".QToolBox{\n"
+"font: 10pt \"Times New Roman\";}"));
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
         page->setGeometry(QRect(0, 0, 210, 724));
-        page->setStyleSheet(QString::fromUtf8(".QWidget{\n"
-"font: 10pt \"\351\273\221\344\275\223\";}"));
+        page->setStyleSheet(QLatin1String(".QWidget{\n"
+"font: 11pt \"Times New Roman\";}"));
         gridLayout_11 = new QGridLayout(page);
         gridLayout_11->setSpacing(6);
         gridLayout_11->setContentsMargins(11, 11, 11, 11);
@@ -431,7 +432,7 @@ public:
         gridLayout_11->setRowStretch(2, 2);
         gridLayout_11->setRowStretch(3, 5);
         gridLayout_11->setRowStretch(4, 3);
-        toolBox->addItem(page, QString::fromUtf8("             \345\237\272\346\234\254\350\256\276\347\275\256"));
+        toolBox->addItem(page, QStringLiteral("          Custom Setting"));
         splitter->addWidget(toolBox);
         groupBox = new QGroupBox(splitter);
         groupBox->setObjectName(QStringLiteral("groupBox"));
@@ -612,10 +613,10 @@ public:
 
         gridLayout_2->addLayout(horizontalLayout_2, 0, 0, 1, 1);
 
-        widget = new QWidget(groupBox_2);
-        widget->setObjectName(QStringLiteral("widget"));
+        TOF_widget = new QCustomPlot(groupBox_2);
+        TOF_widget->setObjectName(QStringLiteral("TOF_widget"));
 
-        gridLayout_2->addWidget(widget, 1, 0, 1, 1);
+        gridLayout_2->addWidget(TOF_widget, 1, 0, 1, 1);
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setSpacing(6);
@@ -697,7 +698,7 @@ public:
         Ratio_lineEdit->setText(QApplication::translate("MainWindow", "1", Q_NULLPTR));
         label_13->setText(QApplication::translate("MainWindow", "\345\201\217\347\247\273\357\274\232", Q_NULLPTR));
         offset_lineEdit->setText(QApplication::translate("MainWindow", "0", Q_NULLPTR));
-        toolBox->setItemText(toolBox->indexOf(page), QApplication::translate("MainWindow", "             \345\237\272\346\234\254\350\256\276\347\275\256", Q_NULLPTR));
+        toolBox->setItemText(toolBox->indexOf(page), QApplication::translate("MainWindow", "          Custom Setting", Q_NULLPTR));
         groupBox->setTitle(QApplication::translate("MainWindow", "Result History", Q_NULLPTR));
         label->setText(QApplication::translate("MainWindow", "History Data:", Q_NULLPTR));
         HistoryData_label->setText(QApplication::translate("MainWindow", "0", Q_NULLPTR));

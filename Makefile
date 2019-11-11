@@ -246,6 +246,7 @@ Makefile: S3_Vidar.pro ..\..\programInstall\QT580\5.8\msvc2015_64\mkspecs\win32-
 		..\..\programInstall\QT580\5.8\msvc2015_64\mkspecs\features\lex.prf \
 		S3_Vidar.pro \
 		..\..\programInstall\QT580\5.8\msvc2015_64\lib\qtmaind.prl \
+		..\..\programInstall\QT580\5.8\msvc2015_64\lib\Qt5PrintSupport.prl \
 		..\..\programInstall\QT580\5.8\msvc2015_64\lib\Qt5Widgets.prl \
 		..\..\programInstall\QT580\5.8\msvc2015_64\lib\Qt5Gui.prl \
 		..\..\programInstall\QT580\5.8\msvc2015_64\lib\Qt5SerialPort.prl \
@@ -424,6 +425,7 @@ Makefile: S3_Vidar.pro ..\..\programInstall\QT580\5.8\msvc2015_64\mkspecs\win32-
 ..\..\programInstall\QT580\5.8\msvc2015_64\mkspecs\features\lex.prf:
 S3_Vidar.pro:
 ..\..\programInstall\QT580\5.8\msvc2015_64\lib\qtmaind.prl:
+..\..\programInstall\QT580\5.8\msvc2015_64\lib\Qt5PrintSupport.prl:
 ..\..\programInstall\QT580\5.8\msvc2015_64\lib\Qt5Widgets.prl:
 ..\..\programInstall\QT580\5.8\msvc2015_64\lib\Qt5Gui.prl:
 ..\..\programInstall\QT580\5.8\msvc2015_64\lib\Qt5SerialPort.prl:

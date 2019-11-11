@@ -2,12 +2,16 @@
 #include "ui_mainwindow.h"
 
 
+Settings currentSettings;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
+
+    ui->ResultHistory_textEdit->document()->setMaximumBlockCount(100000);    //最多显示10000行，滑动存储  10w
 
     qRegisterMetaType<vector<float>>("vector<float>");   //注册函数
     qRegisterMetaType<vector<int>>("vector<int>");       //注册函数
@@ -34,22 +38,48 @@ MainWindow::MainWindow(QWidget *parent) :
     receSerial_Obj->tof_offset = ui->offset_lineEdit->text().toInt();
 
 
-    initSerial();
+
     isLinked = false;
     isTranslateFlag = true;
     Count_num = 0;
     Count_num_lastSec = 0;
     isTimelySaveFlag = false;
+    plot_Mode = false;      //默认不显示统计图
+    plot_type = 0;     //默认显示TOF
+    initSerial();
+    initStatisticUI();
+    initConnect();
 }
 
 void MainWindow::initConnect()
 {
     //接收数据线程 接收并处理数据后，将处理结果发送给主线程的信号与槽
     connect(receSerial_Obj,SIGNAL(dealedData_signal(QString,vector<float>,vector<float>)),this,SLOT(dealedData_slot(QString,vector<float>,vector<float>)));
+    connect(receSerial_Obj,SIGNAL(showResultMsg_signal(QStringList)),SLOT(showResultMsg_slot(QStringList)));
+    //link info slot
+    connect(this,SIGNAL(openOrCloseSerial_signal(bool)),receSerial_Obj,SLOT(openOrCloseSerial_slot(bool)));
+    connect(receSerial_Obj,SIGNAL(returnLinkInfo_signal(QString, bool)),this,SLOT(returnLinkInfo_slot(QString, bool)));
+
 
     //刷新定时器 信号与槽的连接
     connect(&showTimer,SIGNAL(timeout()),this,SLOT(showTimerSlot()));
     connect(&oneSecondTimer,SIGNAL(timeout),this,SLOT(oneSecondTimer_slot()));
+    connect(&plotShowTimer,SIGNAL(timeout()),this,SLOT(plotShowTimer_slot()));
+
+}
+
+
+void MainWindow::initStatisticUI()
+{
+    ui->TOF_widget->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom| QCP::iSelectAxes |
+                                    QCP::iSelectLegend | QCP::iSelectPlottables);
+
+    ui->TOF_widget->legend->setVisible(true);
+    ui->TOF_widget->legend->setFont(QFont("Helvetica", 9));
+    ui->TOF_widget->yAxis->setRange(0,500);
+    ui->TOF_widget->xAxis->setRange(0,256);
+    ui->TOF_widget->addGraph();
+    ui->TOF_widget->graph(0)->setName(QStringLiteral("TOF"));
 
 }
 
@@ -187,29 +217,30 @@ void MainWindow::on_openPort_pushButton_clicked()
 //         qDebug()<<"name="<<currentSettings.name<<" baudRate ="<<currentSettings.baudRate<<" dataBits="<<currentSettings.dataBits<<" parity="<<currentSettings.parity<<" stopBits="<<currentSettings.stopBits<<" flowCon"<<currentSettings.flowControl;
 
 
+        emit openOrCloseSerial_signal(true);
 
-        receSerial_Obj->serial->setPortName(currentSettings.name);
-        receSerial_Obj->serial->setBaudRate(currentSettings.baudRate);
-        receSerial_Obj->serial->setDataBits(currentSettings.dataBits);
-        receSerial_Obj->serial->setParity(currentSettings.parity);
-        receSerial_Obj->serial->setStopBits(currentSettings.stopBits);
-        receSerial_Obj->serial->setFlowControl(currentSettings.flowControl);
-        if (receSerial_Obj->serial->open(QIODevice::ReadWrite)) {
-            isLinked = true;
-             ui->serialPortInfoListBox->setEnabled(false);
-             ui->baudRateBox->setEnabled(false);
-             ui->dataBitsBox->setEnabled(false);
-             ui->parityBox->setEnabled(false);
-             ui->stopBitsBox->setEnabled(false);
+//        receSerial_Obj->serial->setPortName(currentSettings.name);
+//        receSerial_Obj->serial->setBaudRate(currentSettings.baudRate);
+//        receSerial_Obj->serial->setDataBits(currentSettings.dataBits);
+//        receSerial_Obj->serial->setParity(currentSettings.parity);
+//        receSerial_Obj->serial->setStopBits(currentSettings.stopBits);
+//        receSerial_Obj->serial->setFlowControl(currentSettings.flowControl);
+//        if (receSerial_Obj->serial->open(QIODevice::ReadWrite)) {
+//            isLinked = true;
+//             ui->serialPortInfoListBox->setEnabled(false);
+//             ui->baudRateBox->setEnabled(false);
+//             ui->dataBitsBox->setEnabled(false);
+//             ui->parityBox->setEnabled(false);
+//             ui->stopBitsBox->setEnabled(false);
 
-             portOffSetting();
+//             portOffSetting();
 
-        } else {
-            isLinked = false;
-            QMessageBox::critical(this, QStringLiteral("告警"), QStringLiteral("打开串口失败！"));
-            return;
+//        } else {
+//            isLinked = false;
+//            QMessageBox::critical(this, QStringLiteral("告警"), QStringLiteral("打开串口失败！"));
+//            return;
 
-        }
+//        }
 
         qDebug()<<"name="<<currentSettings.name<<" baudRate ="<<currentSettings.baudRate<<" dataBits="<<currentSettings.dataBits<<" parity="<<currentSettings.parity<<" stopBits="<<currentSettings.stopBits<<" flowCon"<<currentSettings.flowControl;
 
@@ -246,24 +277,65 @@ void MainWindow::on_openPort_pushButton_clicked()
             file.close();
         }
 
-        ui->openPort_pushButton->setText("ClosePort");
-        beginTimer();
+//        ui->openPort_pushButton->setText("ClosePort");
+//        beginTimer();
     }
     else
     {
-        receSerial_Obj->serial->close();
-        stopTimer();
-        ui->openPort_pushButton->setText("OpenPort");
-        ui->serialPortInfoListBox->setEnabled(true);
-        ui->baudRateBox->setEnabled(true);
-        ui->dataBitsBox->setEnabled(true);
-        ui->parityBox->setEnabled(true);
-        ui->stopBitsBox->setEnabled(true);
-        portOnSetting();
+        emit openOrCloseSerial_signal(false);
+//        receSerial_Obj->serial->close();
+//        stopTimer();
+//        ui->openPort_pushButton->setText("OpenPort");
+//        ui->serialPortInfoListBox->setEnabled(true);
+//        ui->baudRateBox->setEnabled(true);
+//        ui->dataBitsBox->setEnabled(true);
+//        ui->parityBox->setEnabled(true);
+//        ui->stopBitsBox->setEnabled(true);
+//        portOnSetting();
     }
 
 
 }
+
+void MainWindow::returnLinkInfo_slot(QString str, bool flag)
+{
+    if("open" == str)
+    {
+        if(true == flag)
+        {
+             isLinked = true;
+             ui->serialPortInfoListBox->setEnabled(false);
+             ui->baudRateBox->setEnabled(false);
+             ui->dataBitsBox->setEnabled(false);
+             ui->parityBox->setEnabled(false);
+             ui->stopBitsBox->setEnabled(false);
+             ui->openPort_pushButton->setText("ClosePort");
+             beginTimer();
+        }else
+        {
+            QMessageBox::critical(this, QStringLiteral("告警"), QStringLiteral("打开串口失败！"));
+        }
+    }else
+    {
+        if(true == flag)
+        {
+            isLinked = false;
+            stopTimer();
+            ui->openPort_pushButton->setText("OpenPort");
+            ui->serialPortInfoListBox->setEnabled(true);
+            ui->baudRateBox->setEnabled(true);
+            ui->dataBitsBox->setEnabled(true);
+            ui->parityBox->setEnabled(true);
+            ui->stopBitsBox->setEnabled(true);
+            portOnSetting();
+        }else
+        {
+            QMessageBox::critical(this, QStringLiteral("告警"), QStringLiteral("关闭串口失败！"));
+        }
+    }
+}
+
+
 
 void MainWindow::portOnSetting()
 {
@@ -278,18 +350,6 @@ void MainWindow::portOffSetting()
 }
 
 
-//show plot
-void MainWindow::on_plotSet_on_radioButton_clicked()
-{
-    ui->groupBox_2->setVisible(true);
-    ui->groupBox_9->setVisible(true);
-}
-//hide plot
-void MainWindow::on_plotSet_off_radioButton_clicked()
-{
-    ui->groupBox_2->setVisible(false);
-     ui->groupBox_9->setVisible(false);
-}
 
 
 MainWindow::~MainWindow()
@@ -375,6 +435,8 @@ void MainWindow::showTimerSlot()
 
     //计算tof的均值
     int len = StatisticData_vector.size();
+    if(len<1)
+        return;
     DistanceMean = std::accumulate(std::begin(StatisticData_vector),std::end(StatisticData_vector),0.0)/len;
     ui->mean_label->setText(QString::number(DistanceMean));
 
@@ -393,7 +455,7 @@ void MainWindow::showTimerSlot()
         Count_num++;
         ui->ResultHistory_textEdit->append(DistanceStr[i]);
     }
-    DistanceStr.clear();
+    DistanceStr.clear();    //清空暂存的变量
     ui->HistoryData_label->setText(QString::number(Count_num));   //显示记录条数
 
 }
@@ -440,6 +502,12 @@ void MainWindow::on_save_pushButton_clicked()
     QMessageBox::information(NULL,QStringLiteral("提示"),strMsg);
 }
 
+
+//接收串口处理线程发送来的用于界面上显示的字符串连接
+void MainWindow::showResultMsg_slot(QStringList DisStr)
+{
+    DistanceStr = DisStr;
+}
 
 //每秒钟刷新的槽函数
 void MainWindow::oneSecondTimer_slot()
@@ -519,3 +587,99 @@ void MainWindow::on_clear_pushButton_clicked()
 
 
 
+// no Peak radioButton checked
+void MainWindow::on_noPeak_radioButton_clicked()
+{
+    receSerial_Obj->withOrNotPeakFlag = false;
+    ui->groupBox_6->setEnabled(false);
+}
+
+// with Peak radioButton checked
+void MainWindow::on_withPeak_radioButton_clicked()
+{
+    receSerial_Obj->withOrNotPeakFlag = true;
+    ui->groupBox_6->setEnabled(true);
+}
+
+//显示TOF的统计信息
+void MainWindow::on_TOF_radioButton_clicked()
+{
+    plot_type = 0;
+}
+
+//显示统计直方图
+void MainWindow::on_Histogram_radioButton_clicked()
+{
+    plot_type = 1;
+}
+
+
+//show plot
+void MainWindow::on_plotSet_on_radioButton_clicked()
+{
+    plotShowTimer.start(20);
+    plot_Mode = true;
+    ui->groupBox_2->setVisible(true);
+
+}
+//hide plot
+void MainWindow::on_plotSet_off_radioButton_clicked()
+{
+    plotShowTimer.stop();
+    plot_Mode = false;
+    ui->groupBox_2->setVisible(false);
+
+}
+
+
+//显示统计信息的槽函数 20ms刷新一次
+void MainWindow::plotShowTimer_slot()
+{
+    QVector<double> label_x(20000);
+    QVector<double> tofValue(20000);
+
+    float labelMax = 0;
+    float valueMax = 0;
+    if(plot_Mode)   //用户选中了显示统计信息的模式
+    {
+        if(0 == plot_type)          //显示tof的统计信息
+        {
+            int len = PlotData_vector.size();
+            if(len<1)
+                return;
+            for(int i=0; i< len; i++)
+            {
+                label_x[i] = i;
+                tofValue[i] = PlotData_vector[i];
+
+                valueMax = valueMax>tofValue[i] ? valueMax:tofValue[i];    //统计tof的最大值，方便显示
+            }
+            labelMax = PlotData_vector.size();
+
+            ui->TOF_widget->xAxis->setRange(0,labelMax);
+            ui->TOF_widget->yAxis->setRange(0,valueMax+10);
+            ui->TOF_widget->graph(0)->setData(label_x,tofValue);
+            ui->TOF_widget->replot();
+
+
+        }else if(1 == plot_type)    //显示直方图的信息
+        {
+
+        }
+    }
+}
+
+
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+    qDebug()<<"key num = "<<e->key();
+    if(90 == e->key() && isLinked==true)
+    {
+        ui->groupBox_9->setVisible(true);
+    }else if(88 == e->key() && isLinked==true)
+    {
+        ui->groupBox_9->setVisible(false);
+    }
+
+
+}

@@ -33,7 +33,7 @@
        </property>
        <property name="styleSheet">
         <string notr="true">.QToolBox{
-font: 10pt &quot;黑体&quot;;}</string>
+font: 10pt &quot;Times New Roman&quot;;}</string>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -49,10 +49,10 @@ font: 10pt &quot;黑体&quot;;}</string>
         </property>
         <property name="styleSheet">
          <string notr="true">.QWidget{
-font: 10pt &quot;黑体&quot;;}</string>
+font: 11pt &quot;Times New Roman&quot;;}</string>
         </property>
         <attribute name="label">
-         <string>             基本设置</string>
+         <string>          Custom Setting</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_11" rowstretch="6,5,2,5,3">
          <item row="0" column="0">
@@ -649,7 +649,7 @@ font: 10pt &quot;黑体&quot;;}</string>
          </layout>
         </item>
         <item row="1" column="0">
-         <widget class="QWidget" name="widget" native="true"/>
+         <widget class="QCustomPlot" name="TOF_widget" native="true"/>
         </item>
         <item row="2" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,8">
@@ -702,6 +702,14 @@ font: 10pt &quot;黑体&quot;;}</string>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
