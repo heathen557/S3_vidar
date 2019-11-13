@@ -28,6 +28,7 @@
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSplitter>
+#include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
@@ -122,13 +123,19 @@ public:
     QSpacerItem *horizontalSpacer_6;
     QPushButton *clear_pushButton;
     QGroupBox *groupBox_2;
-    QGridLayout *gridLayout_2;
+    QGridLayout *gridLayout_12;
     QHBoxLayout *horizontalLayout_2;
     QRadioButton *TOF_radioButton;
     QSpacerItem *horizontalSpacer_3;
     QRadioButton *Histogram_radioButton;
     QSpacerItem *horizontalSpacer_4;
+    QStackedWidget *stackedWidget;
+    QWidget *page_2;
+    QGridLayout *gridLayout_2;
     QCustomPlot *TOF_widget;
+    QWidget *page_3;
+    QGridLayout *gridLayout_13;
+    QCustomPlot *Histogram_widget;
     QHBoxLayout *horizontalLayout_5;
     QPushButton *savePicture_pushButton;
     QSpacerItem *horizontalSpacer_7;
@@ -580,10 +587,10 @@ public:
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
         groupBox_2->setStyleSheet(QLatin1String(".QGroupBox\n"
 "{font: 10pt \"Times New Roman\";}"));
-        gridLayout_2 = new QGridLayout(groupBox_2);
-        gridLayout_2->setSpacing(6);
-        gridLayout_2->setContentsMargins(11, 11, 11, 11);
-        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
+        gridLayout_12 = new QGridLayout(groupBox_2);
+        gridLayout_12->setSpacing(6);
+        gridLayout_12->setContentsMargins(11, 11, 11, 11);
+        gridLayout_12->setObjectName(QStringLiteral("gridLayout_12"));
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
@@ -611,12 +618,36 @@ public:
         horizontalLayout_2->setStretch(2, 1);
         horizontalLayout_2->setStretch(3, 3);
 
-        gridLayout_2->addLayout(horizontalLayout_2, 0, 0, 1, 1);
+        gridLayout_12->addLayout(horizontalLayout_2, 0, 0, 1, 1);
 
-        TOF_widget = new QCustomPlot(groupBox_2);
+        stackedWidget = new QStackedWidget(groupBox_2);
+        stackedWidget->setObjectName(QStringLiteral("stackedWidget"));
+        page_2 = new QWidget();
+        page_2->setObjectName(QStringLiteral("page_2"));
+        gridLayout_2 = new QGridLayout(page_2);
+        gridLayout_2->setSpacing(6);
+        gridLayout_2->setContentsMargins(11, 11, 11, 11);
+        gridLayout_2->setObjectName(QStringLiteral("gridLayout_2"));
+        TOF_widget = new QCustomPlot(page_2);
         TOF_widget->setObjectName(QStringLiteral("TOF_widget"));
 
-        gridLayout_2->addWidget(TOF_widget, 1, 0, 1, 1);
+        gridLayout_2->addWidget(TOF_widget, 0, 0, 1, 1);
+
+        stackedWidget->addWidget(page_2);
+        page_3 = new QWidget();
+        page_3->setObjectName(QStringLiteral("page_3"));
+        gridLayout_13 = new QGridLayout(page_3);
+        gridLayout_13->setSpacing(6);
+        gridLayout_13->setContentsMargins(11, 11, 11, 11);
+        gridLayout_13->setObjectName(QStringLiteral("gridLayout_13"));
+        Histogram_widget = new QCustomPlot(page_3);
+        Histogram_widget->setObjectName(QStringLiteral("Histogram_widget"));
+
+        gridLayout_13->addWidget(Histogram_widget, 0, 0, 1, 1);
+
+        stackedWidget->addWidget(page_3);
+
+        gridLayout_12->addWidget(stackedWidget, 1, 0, 1, 1);
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setSpacing(6);
@@ -633,11 +664,8 @@ public:
         horizontalLayout_5->setStretch(0, 1);
         horizontalLayout_5->setStretch(1, 8);
 
-        gridLayout_2->addLayout(horizontalLayout_5, 2, 0, 1, 1);
+        gridLayout_12->addLayout(horizontalLayout_5, 2, 0, 1, 1);
 
-        gridLayout_2->setRowStretch(0, 1);
-        gridLayout_2->setRowStretch(1, 20);
-        gridLayout_2->setRowStretch(2, 1);
         splitter->addWidget(groupBox_2);
 
         gridLayout_3->addWidget(splitter, 0, 0, 1, 1);
@@ -657,6 +685,7 @@ public:
         retranslateUi(MainWindow);
 
         toolBox->setCurrentIndex(0);
+        stackedWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(MainWindow);

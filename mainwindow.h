@@ -13,6 +13,7 @@
 #include<QFileDialog>
 #include<QDateTime>
 #include<qcustomplot.h>
+#include<calhistogram_obj.h>
 
 
 namespace Ui {
@@ -35,9 +36,14 @@ public:
 
     void keyPressEvent(QKeyEvent *e);
 
-    receSerial_msg  *receSerial_Obj;
+    receSerial_msg  *receSerial_Obj;      //串口接收数据线程
 
     QThread *receSerialThread;
+
+    calHistogram_obj  *calHis_obg;        //计算统计直方图的线程
+
+    QThread *calHisThread;
+
 
     bool isLinked;
 
@@ -53,9 +59,9 @@ public:
 
     QStringList DistanceStr;               //要显示的tof/peak的字符串，或者显示16进制数据
 
-    vector<float> PlotData_vector;           //plot相关
+    vector<double> PlotData_vector;           //plot相关
 
-    vector<float> StatisticData_vector;      //统计相关
+    vector<double> StatisticData_vector;      //统计相关
 
     bool isTranslateFlag;     //解析数据 还是直接显示16进制的 切换标识 true：则对数据进行解析
 
@@ -74,6 +80,12 @@ public:
     QTimer plotShowTimer;     //plot显示的 定时器  20ms
 
     int plot_type;            //0：显示TOF   1：显示直方图His
+
+    QCPBars *regen;          //直方图用   *****标签相关
+
+    int index;
+
+
 
 private slots:
     void on_save_pushButton_clicked();
@@ -100,7 +112,7 @@ private slots:
 
     void on_PeakSet_off_radioButton_clicked();
 
-    void dealedData_slot(QString,vector<float>,vector<float>);   //接收处理数据线程数据的槽函数
+    void dealedData_slot(QString,vector<double>,vector<double>);   //接收处理数据线程数据的槽函数
 
     void showTimerSlot();
 
@@ -134,9 +146,16 @@ private slots:
 
     void returnLinkInfo_slot(QString, bool);
 
+    void toShowHistogram_slot(QVector<double>,QVector<double>,QVector<QString>,int ,int );   //显示统计直方图
+
+
+
+    void on_savePicture_pushButton_clicked();
+
 signals:
     void openOrCloseSerial_signal(bool);     //true:open   false：close
 
+    void calHistogram_signal(vector<double>);    //begin histogram signal()
 
 private:
     Ui::MainWindow *ui;

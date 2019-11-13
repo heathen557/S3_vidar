@@ -26,10 +26,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     receserial_msg.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    calhistogram_obj.cpp
 
 HEADERS  += mainwindow.h \
     receserial_msg.h \
-    qcustomplot.h
+    qcustomplot.h \
+    calhistogram_obj.h
 
 FORMS    += mainwindow.ui

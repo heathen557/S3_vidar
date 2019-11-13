@@ -13,8 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->ResultHistory_textEdit->document()->setMaximumBlockCount(100000);    //最多显示10000行，滑动存储  10w
 
-    qRegisterMetaType<vector<float>>("vector<float>");   //注册函数
+    qRegisterMetaType<vector<double>>("vector<double>");   //注册函数
     qRegisterMetaType<vector<int>>("vector<int>");       //注册函数
+    qRegisterMetaType<QVector<double>>("QVector<double>");   //注册函数
+    qRegisterMetaType<QVector<QString>>("QVector<QString>");   //注册函数
 
     ui->splitter->setStretchFactor(0,2);
     ui->splitter->setStretchFactor(1,5);
@@ -30,6 +32,13 @@ MainWindow::MainWindow(QWidget *parent) :
     receSerialThread = new QThread;
     receSerial_Obj->moveToThread(receSerialThread);
     receSerialThread->start();
+
+
+
+    calHis_obg = new calHistogram_obj;
+    calHisThread = new QThread;
+    calHis_obg->moveToThread(calHisThread);
+    calHisThread->start();
 
 
     //初始化偏移 等参数
@@ -49,21 +58,25 @@ MainWindow::MainWindow(QWidget *parent) :
     initSerial();
     initStatisticUI();
     initConnect();
+
 }
 
 void MainWindow::initConnect()
 {
     //接收数据线程 接收并处理数据后，将处理结果发送给主线程的信号与槽
-    connect(receSerial_Obj,SIGNAL(dealedData_signal(QString,vector<float>,vector<float>)),this,SLOT(dealedData_slot(QString,vector<float>,vector<float>)));
+    connect(receSerial_Obj,SIGNAL(dealedData_signal(QString,vector<double>,vector<double>)),this,SLOT(dealedData_slot(QString,vector<double>,vector<double>)));
     connect(receSerial_Obj,SIGNAL(showResultMsg_signal(QStringList)),SLOT(showResultMsg_slot(QStringList)));
     //link info slot
     connect(this,SIGNAL(openOrCloseSerial_signal(bool)),receSerial_Obj,SLOT(openOrCloseSerial_slot(bool)));
     connect(receSerial_Obj,SIGNAL(returnLinkInfo_signal(QString, bool)),this,SLOT(returnLinkInfo_slot(QString, bool)));
 
+    // calculate histogram connect
+    connect(this,SIGNAL(calHistogram_signal(vector<double>)),calHis_obg,SLOT(calHistogram_slot(vector<double>)));
+    connect(calHis_obg,SIGNAL(toShowHistogram_signal(QVector<double>,QVector<double>,QVector<QString>,int ,int )),this,SLOT(toShowHistogram_slot(QVector<double>,QVector<double>,QVector<QString>,int ,int )));
 
     //刷新定时器 信号与槽的连接
     connect(&showTimer,SIGNAL(timeout()),this,SLOT(showTimerSlot()));
-    connect(&oneSecondTimer,SIGNAL(timeout),this,SLOT(oneSecondTimer_slot()));
+    connect(&oneSecondTimer,SIGNAL(timeout()),this,SLOT(oneSecondTimer_slot()));
     connect(&plotShowTimer,SIGNAL(timeout()),this,SLOT(plotShowTimer_slot()));
 
 }
@@ -71,6 +84,14 @@ void MainWindow::initConnect()
 
 void MainWindow::initStatisticUI()
 {
+    QString demoName = "Histogram";//实例名称
+    // set dark background gradient: 设置暗背景渐变
+    QLinearGradient gradient(0, 0, 0, 400);
+    gradient.setColorAt(0, QColor(90, 90, 90));//开始颜色为黑色
+    gradient.setColorAt(0.38, QColor(200, 105, 105));//红色
+    gradient.setColorAt(1, QColor(70, 70, 70));//黑色
+    //tof统计相关
+//    ui->TOF_widget->setBackground(QBrush(gradient));//设置图表背景（用画刷设置）
     ui->TOF_widget->setInteractions(QCP::iRangeDrag|QCP::iRangeZoom| QCP::iSelectAxes |
                                     QCP::iSelectLegend | QCP::iSelectPlottables);
 
@@ -80,6 +101,58 @@ void MainWindow::initStatisticUI()
     ui->TOF_widget->xAxis->setRange(0,256);
     ui->TOF_widget->addGraph();
     ui->TOF_widget->graph(0)->setName(QStringLiteral("TOF"));
+
+    //Histgram统计相关
+
+//    ui->Histogram_widget->setBackground(QBrush(gradient));//设置图表背景（用画刷设置）
+
+
+    regen = new QCPBars(ui->Histogram_widget->xAxis, ui->Histogram_widget->yAxis);
+    regen->setAntialiased(false);
+    regen->setStackingGap(2);
+    regen->setName("Regenerative");
+    regen->setPen(QPen(QColor(0, 168, 140).lighter(130)));
+    regen->setBrush(QColor(0, 168, 140));
+
+    ui->Histogram_widget->xAxis->setTickLabelRotation(60);//设置标签角度旋转
+    ui->Histogram_widget->xAxis->setSubTicks(false);//设置是否显示子标签
+    ui->Histogram_widget->xAxis->setTickLength(0, 4);
+    ui->Histogram_widget->xAxis->setRange(0, 500);     //设置x轴区间
+    ui->Histogram_widget->xAxis->setBasePen(QPen(Qt::black));
+    ui->Histogram_widget->xAxis->setTickPen(QPen(Qt::black));
+    ui->Histogram_widget->xAxis->grid()->setVisible(true);//设置网格是否显示
+    ui->Histogram_widget->xAxis->grid()->setPen(QPen(QColor(130, 130, 130), 0, Qt::DotLine));
+    ui->Histogram_widget->xAxis->setTickLabelColor(Qt::black);//设置标记标签颜色
+    ui->Histogram_widget->xAxis->setLabelColor(Qt::black);
+
+    // prepare y axis: //设置y轴
+    ui->Histogram_widget->yAxis->setRange(0, 800);
+    ui->Histogram_widget->yAxis->setPadding(5); // a bit more space to the left border 设置左边留空间
+//    ui->Histogram_widget->yAxis->setLabel("Power Consumption in\nKilowatts per Capita (2007)");
+    ui->Histogram_widget->yAxis->setBasePen(QPen(Qt::black));
+    ui->Histogram_widget->yAxis->setTickPen(QPen(Qt::black));
+    ui->Histogram_widget->yAxis->setSubTickPen(QPen(Qt::black));//设置SubTick颜色，SubTick指的是轴上的
+                                                      //刻度线
+    ui->Histogram_widget->yAxis->grid()->setSubGridVisible(true);
+    ui->Histogram_widget->yAxis->setTickLabelColor(Qt::black);//设置标记标签颜色（y轴标记标签）
+    ui->Histogram_widget->yAxis->setLabelColor(Qt::black);//设置标签颜色（y轴右边标签）
+    ui->Histogram_widget->yAxis->grid()->setPen(QPen(QColor(130, 130, 130), 0, Qt::SolidLine));
+    ui->Histogram_widget->yAxis->grid()->setSubGridPen(QPen(QColor(130, 130, 130), 0, Qt::DotLine));
+
+
+    // setup legend: 设置标签
+//    ui->Histogram_widget->legend->setVisible(true);
+    ui->Histogram_widget->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignTop|Qt::AlignHCenter);
+    ui->Histogram_widget->legend->setBrush(QColor(255, 255, 255, 100));
+    ui->Histogram_widget->legend->setBorderPen(Qt::NoPen);
+    QFont legendFont = font();
+    legendFont.setPointSize(10);
+    ui->Histogram_widget->legend->setFont(legendFont);
+    ui->Histogram_widget->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);//设置 可拖动，可放大缩
+
+
+
+
 
 }
 
@@ -390,8 +463,6 @@ void MainWindow::on_Transform_checkBox_clicked()
         qDebug()<<" checked is false";
         receSerial_Obj->isTranslateFlag = false;
     }
-
-
 }
 
 
@@ -418,7 +489,7 @@ void MainWindow::on_PeakSet_off_radioButton_clicked()
 
 
 //接收处理数据线程数据的槽函数
-void MainWindow::dealedData_slot(QString currTof,vector<float> plotData, vector<float> StatisticData)
+void MainWindow::dealedData_slot(QString currTof,vector<double> plotData, vector<double> StatisticData)
 {
     DistanceStrCurrent = currTof;
 
@@ -604,13 +675,25 @@ void MainWindow::on_withPeak_radioButton_clicked()
 //显示TOF的统计信息
 void MainWindow::on_TOF_radioButton_clicked()
 {
+    if(plotShowTimer.isActive())
+        plotShowTimer.stop();
+    plotShowTimer.start(20);
+
     plot_type = 0;
+    ui->stackedWidget->setCurrentIndex(0);
+
+
 }
 
-//显示统计直方图
+//显示统计直方图   由于耗时严重，由专门的线程进行处理
 void MainWindow::on_Histogram_radioButton_clicked()
 {
+    if(plotShowTimer.isActive())
+        plotShowTimer.stop();
+    plotShowTimer.start(200);      //定时器改为200ms进行一次刷新
+
     plot_type = 1;
+    ui->stackedWidget->setCurrentIndex(1);
 }
 
 
@@ -665,9 +748,61 @@ void MainWindow::plotShowTimer_slot()
         }else if(1 == plot_type)    //显示直方图的信息
         {
 
+            index++;
+            vector<double> vec(20000);
+            for(int i=0; i<8000; i++)
+                vec[i] = 1.9;
+
+            if(index%11==0)
+            {
+                for(int i=0; i<20000; i++)
+                    vec[i] = 100;
+            }
+            vec.push_back(2.2);
+            vec.push_back(1.1);
+            vec.push_back(2.1);
+            vec.push_back(2.1);
+            vec.push_back(2.2);
+            vec.push_back(1.1);
+            vec.push_back(3.3);
+            vec.push_back(2.1);
+            vec.push_back(3.3);
+//            emit calHistogram_signal(PlotData_vector);
+            emit calHistogram_signal(vec);
         }
     }
 }
+
+
+//显示统计直方图放的槽函数
+void MainWindow::toShowHistogram_slot(QVector<double> xTicks,QVector<double> numData,QVector<QString> xLabels,int xMax,int yMax)
+{
+
+//    qDebug()<<" xTicks = "<<xTicks;
+    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
+//    textTicker->addTicks(ticks, labels);
+    textTicker->setTicks(xTicks, xLabels);
+    ui->Histogram_widget->xAxis->setTicker(textTicker);
+
+    ui->Histogram_widget->xAxis->setRange(0,xMax);
+    ui->Histogram_widget->yAxis->setRange(0,yMax);
+
+    regen->setData(xTicks, numData);        //只不过第一个向量xTicks的每个元素表示“第几个柱子”，然后后面对应的values表示对应“柱子的值”
+    ui->Histogram_widget->replot();
+}
+
+//保存统计图像
+void MainWindow::on_savePicture_pushButton_clicked()
+{
+    if(0 == plot_type)     //保存统计图
+    {
+
+    }else                   //保存直方图
+    {
+
+    }
+}
+
 
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -680,6 +815,6 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     {
         ui->groupBox_9->setVisible(false);
     }
-
-
 }
+
+

@@ -53,13 +53,13 @@ public:
 
     bool peak_disp_mode;
 
-    vector<float> PlotData_vector;           //plot相关
-    vector<float> StatisticData_vector;      //统计相关
+    vector<double> PlotData_vector;           //plot相关
+    vector<double> StatisticData_vector;      //统计相关
     QStringList   DistanceStr;            //显示tof peak相关
 
 
 signals:
-    void dealedData_signal(QString,vector<float>,vector<float>);     //当前的tof值 ; plotData ; statisticData
+    void dealedData_signal(QString,vector<double>,vector<double>);     //当前的tof值 ; plotData ; statisticData
 
     void showResultMsg_signal(QStringList);  //显示tof peak相关  主界面显示;  主线程中设定一个暂存变量，每秒钟在result窗口中显示append(),然后清空result
 

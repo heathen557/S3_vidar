@@ -87,7 +87,7 @@ void receSerial_msg::readDataSlot()
                 if(totallen <27)
                     return;
 
-               int indexOf5A = m_buffer.indexOf("5A 03 04 00 ",0);
+               int indexOf5A = m_buffer.indexOf("5A 03 ",0);
                if(indexOf5A < 0)  //没有找到5A
                {
                    qDebug()<<QString::fromUtf8("接收数据有误，不存在5A")<<"index ="<<indexOf5A<<"buffer"<<m_buffer<<endl;
@@ -101,51 +101,79 @@ void receSerial_msg::readDataSlot()
                }
 
                //以下数据为5A打头数据
+               //首先根据长度字段 来提取出整条数据，数据长度不足的话返回
+               QString lenStr= m_buffer.mid(9,2) + m_buffer.mid(6,2);
+               int len = (lenStr.toInt(NULL,16) + 5 ) * 3;       //5A 03 04 00  + 检验位共5个字节   这个len是单个包的总长度
+               if(totallen < len)                                 //本次接收不够一个包,返回 等待下次接收
+                   return;
+
 
                //进行和校验
-               QString single_Data = m_buffer.left(27);
+               QString single_Data = m_buffer.left(len);
                if(!msgCheck(single_Data))
                     return;
 
-               //获取角度信息
-               QString angle_str_ = single_Data.mid(12,5);
-               angle_str_ = angle_str_.replace(" ", "");
-               QString s1=angle_str_[0];
-               QString s2=angle_str_[1];
-               QString s3=angle_str_[2];
-               QString s4=angle_str_[3];
-               QString angle_str = s3+s4+s1+s2;
-               int TOF = angle_str.toInt(NULL,16);
-    //           qDebug()<<"TOF = "<<TOF;
-
-               //获取距离信息(mm)
-               QString distance_str_ = single_Data.mid(18,5);
-               distance_str_ = distance_str_.replace(" ", "");
-               s1=distance_str_[0];
-               s2=distance_str_[1];
-               s3=distance_str_[2];
-               s4=distance_str_[3];
-               QString distance_str = s3+s4+s1+s2;
-               int PEAK = distance_str.toInt(NULL,16);
-    //           qDebug()<<"PEAK = "<<PEAK;
-
-
-               //sample_range 样本的个数
-               //向每个点的容器中添加一个新的点,完成循环存储
-               int offset = tofPeak_vector.size() - 2*sample_range;
-               if(offset >= 0)
+               int TOF,PEAK;
+               QString DataStr = single_Data.mid(12,len);      //去掉前面的4个字节
+               for(int k=0; k<len/4; k++)                      //K代表有几组数据
                {
-                   tofPeak_vector.erase(tofPeak_vector.begin(),tofPeak_vector.begin()+offset + 2);    //减去两个本身就存在的点
+                   QString TofString = DataStr.mid(k*12+3,2) + DataStr.mid(k*12,2);             //12代表4个字节的长度
+                   QString PeakString = DataStr.mid(k*12+9,2) + DataStr.mid(k*12+6,2);
+
+                   TOF = TofString.toInt(NULL,16);
+                   PEAK =PeakString.toInt(NULL,16);
+
+                   //sample_range 样本的个数
+                   //向每个点的容器中添加一个新的点,完成循环存储
+                   int offset = tofPeak_vector.size() - 2*sample_range;
+                   if(offset >= 0)
+                   {
+                       tofPeak_vector.erase(tofPeak_vector.begin(),tofPeak_vector.begin()+offset + 2);    //减去两个本身就存在的点
+                   }
+                   tofPeak_vector.push_back(TOF);
+                   tofPeak_vector.push_back(PEAK);
                }
-               tofPeak_vector.push_back(TOF);
-               tofPeak_vector.push_back(PEAK);
+
+
+//               //获取角度信息
+//               QString angle_str_ = single_Data.mid(12,5);
+//               angle_str_ = angle_str_.replace(" ", "");
+//               QString s1=angle_str_[0];
+//               QString s2=angle_str_[1];
+//               QString s3=angle_str_[2];
+//               QString s4=angle_str_[3];
+//               QString angle_str = s3+s4+s1+s2;
+//               int TOF = angle_str.toInt(NULL,16);
+//    //           qDebug()<<"TOF = "<<TOF;
+
+//               //获取距离信息(mm)
+//               QString distance_str_ = single_Data.mid(18,5);
+//               distance_str_ = distance_str_.replace(" ", "");
+//               s1=distance_str_[0];
+//               s2=distance_str_[1];
+//               s3=distance_str_[2];
+//               s4=distance_str_[3];
+//               QString distance_str = s3+s4+s1+s2;
+//               int PEAK = distance_str.toInt(NULL,16);
+//    //           qDebug()<<"PEAK = "<<PEAK;
+
+
+//               //sample_range 样本的个数
+//               //向每个点的容器中添加一个新的点,完成循环存储
+//               int offset = tofPeak_vector.size() - 2*sample_range;
+//               if(offset >= 0)
+//               {
+//                   tofPeak_vector.erase(tofPeak_vector.begin(),tofPeak_vector.begin()+offset + 2);    //减去两个本身就存在的点
+//               }
+//               tofPeak_vector.push_back(TOF);
+//               tofPeak_vector.push_back(PEAK);
 
 
                //对样本的tof、peak取均值
                int sum_tof = 0;
                int sum_peak = 0;
-               int len = tofPeak_vector.size();
-               for(int ii=0; ii<len; ii+=2)
+               int len1 = tofPeak_vector.size();
+               for(int ii=0; ii<len1; ii+=2)
                {
                    sum_tof += tofPeak_vector[ii];
                    sum_peak += tofPeak_vector[ii+1];
@@ -166,7 +194,7 @@ void receSerial_msg::readDataSlot()
                PlotData_vector.push_back(result);
 
 
-               //StatisticData_vector 对1000帧数据进行循环存储
+               //StatisticData_vector 对1000帧tof数据进行循环存储
                int statistic_offset = StatisticData_vector.size() -1000;
                if(statistic_offset >= 0)
                {
@@ -194,7 +222,7 @@ void receSerial_msg::readDataSlot()
                emit showResultMsg_signal(DistanceStr);                                                     //发送用于界面显示的数据  显示TOF或者PEAK 或者16进制数据
                DistanceStr.clear();
 
-               m_buffer = m_buffer.right(totallen - 27);   //一帧处理完毕 减去该帧的长度
+               m_buffer = m_buffer.right(totallen - len);                                                  //一帧处理完毕 减去该帧的长度
                totallen = m_buffer.size();
     //         qDebug()<<"total ="<<totallen<<endl;
             }
@@ -213,19 +241,38 @@ void receSerial_msg::readDataSlot()
 
 bool receSerial_msg::msgCheck(QString msg)
 {
-    QString str1 = msg.mid(3,2);
-    QString str2 = msg.mid(6,2);
-    QString str3 = msg.mid(9,2);
-    QString str4 = msg.mid(12,2);
-    QString str5 = msg.mid(15,2);
-    int num = str1.toInt(NULL,16)+str2.toInt(NULL,16)+str3.toInt(NULL,16)+str4.toInt(NULL,16);
-    if(quint8(~num) == str5.toInt(NULL,16))
+    int len = msg.length();
+    int i=3;
+    int num = 0;
+    for(;i<len-3;i+=3)
+    {
+        num += msg.mid(i,2).toInt(NULL,16);
+    }
+
+    int checkNum = msg.mid(i,2).toInt(NULL,16);
+    if(quint8(~num) == checkNum)
     {
         return true;
     }else
     {
         return false;
     }
+
+
+
+//    QString str1 = msg.mid(3,2);
+//    QString str2 = msg.mid(6,2);
+//    QString str3 = msg.mid(9,2);
+//    QString str4 = msg.mid(12,2);
+//    QString str5 = msg.mid(15,2);
+//    int num = str1.toInt(NULL,16)+str2.toInt(NULL,16)+str3.toInt(NULL,16)+str4.toInt(NULL,16);
+//    if(quint8(~num) == str5.toInt(NULL,16))
+//    {
+//        return true;
+//    }else
+//    {
+//        return false;
+//    }
 }
 
 
