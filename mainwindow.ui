@@ -44,7 +44,7 @@ font: 10pt &quot;Times New Roman&quot;;}</string>
           <x>0</x>
           <y>0</y>
           <width>210</width>
-          <height>724</height>
+          <height>739</height>
          </rect>
         </property>
         <property name="styleSheet">
@@ -157,6 +157,9 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               </item>
               <item>
                <widget class="QLabel" name="currentDistance_label">
+                <property name="styleSheet">
+                 <string notr="true">font: 87 9pt &quot;Arial Black&quot;;</string>
+                </property>
                 <property name="text">
                  <string>0.00</string>
                 </property>
@@ -171,6 +174,9 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               </item>
               <item>
                <widget class="QLabel" name="mean_label">
+                <property name="styleSheet">
+                 <string notr="true">font: 87 9pt &quot;Arial Black&quot;;</string>
+                </property>
                 <property name="text">
                  <string>0.00</string>
                 </property>
@@ -185,6 +191,9 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               </item>
               <item>
                <widget class="QLabel" name="std_label">
+                <property name="styleSheet">
+                 <string notr="true">font: 87 9pt &quot;Arial Black&quot;;</string>
+                </property>
                 <property name="text">
                  <string>0.00</string>
                 </property>

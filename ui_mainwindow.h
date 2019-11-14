@@ -167,7 +167,7 @@ public:
 "font: 10pt \"Times New Roman\";}"));
         page = new QWidget();
         page->setObjectName(QStringLiteral("page"));
-        page->setGeometry(QRect(0, 0, 210, 724));
+        page->setGeometry(QRect(0, 0, 210, 739));
         page->setStyleSheet(QLatin1String(".QWidget{\n"
 "font: 11pt \"Times New Roman\";}"));
         gridLayout_11 = new QGridLayout(page);
@@ -269,6 +269,7 @@ public:
 
         currentDistance_label = new QLabel(groupBox_4);
         currentDistance_label->setObjectName(QStringLiteral("currentDistance_label"));
+        currentDistance_label->setStyleSheet(QStringLiteral("font: 87 9pt \"Arial Black\";"));
 
         verticalLayout->addWidget(currentDistance_label);
 
@@ -279,6 +280,7 @@ public:
 
         mean_label = new QLabel(groupBox_4);
         mean_label->setObjectName(QStringLiteral("mean_label"));
+        mean_label->setStyleSheet(QStringLiteral("font: 87 9pt \"Arial Black\";"));
 
         verticalLayout->addWidget(mean_label);
 
@@ -289,6 +291,7 @@ public:
 
         std_label = new QLabel(groupBox_4);
         std_label->setObjectName(QStringLiteral("std_label"));
+        std_label->setStyleSheet(QStringLiteral("font: 87 9pt \"Arial Black\";"));
 
         verticalLayout->addWidget(std_label);
 

@@ -18,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<QVector<double>>("QVector<double>");   //注册函数
     qRegisterMetaType<QVector<QString>>("QVector<QString>");   //注册函数
 
-    ui->splitter->setStretchFactor(0,2);
-    ui->splitter->setStretchFactor(1,5);
-    ui->splitter->setStretchFactor(1,5);
+    ui->splitter->setStretchFactor(0,1);
+    ui->splitter->setStretchFactor(1,2);
+    ui->splitter->setStretchFactor(2,5);
     ui->groupBox_2->setVisible(false);
     ui->groupBox_9->setVisible(false);
 
@@ -794,13 +794,63 @@ void MainWindow::toShowHistogram_slot(QVector<double> xTicks,QVector<double> num
 //保存统计图像
 void MainWindow::on_savePicture_pushButton_clicked()
 {
-    if(0 == plot_type)     //保存统计图
-    {
+    QString filePath;
 
-    }else                   //保存直方图
-    {
+    QFileDialog *fileDialog = new QFileDialog(this);//创建一个QFileDialog对象，构造函数中的参数可以有所添加。
+    fileDialog->setWindowTitle(tr("Save As"));//设置文件保存对话框的标题
+    fileDialog->setAcceptMode(QFileDialog::AcceptSave);//设置文件对话框为保存模式
+    fileDialog->setFileMode(QFileDialog::AnyFile);//设置文件对话框弹出的时候显示任何文件，不论是文件夹还是文件
+    fileDialog->setViewMode(QFileDialog::Detail);//文件以详细的形式显示，显示文件名，大小，创建日期等信息；
+    fileDialog->setGeometry(10,30,300,200);//设置文件对话框的显示位置
+    fileDialog->setDirectory(".");//设置文件对话框打开时初始打开的位置
+    QStringList mimeTypeFilters;
+//    mimeTypeFilters <<"(*.bmp)|*.bmp|JPEG(*.jpg)|*.jpg;|Png(*.png)|*.png" ;
+    mimeTypeFilters<<"bmp(*.bmp)|*.bmp"<<"JPEG(*.jpg)|*.jpg"<<"Png(*.png)|*.png"<<"PDF(*.pdf)|*.pdf";
+    fileDialog->setNameFilters(mimeTypeFilters);
 
+
+    if(fileDialog->exec() == QDialog::Accepted)
+    {
+        filePath = fileDialog->selectedFiles()[0];//得到用户选择的文件名
+        qDebug()<<" filePath = "<<filePath<<endl;
+        QString formatStr = filePath.right(3);
+        if(0 == plot_type)   //保存统计图
+        {
+            if("bmp" == formatStr)
+            {
+                ui->TOF_widget->saveBmp(filePath.toLatin1().data());
+            }else if("jpg" == formatStr)
+            {
+                ui->TOF_widget->saveJpg(filePath.toLatin1().data());
+            }else if("png" == formatStr)
+            {
+                ui->TOF_widget->savePng(filePath.toLatin1().data());
+            }else if("pdf" == formatStr)
+            {
+                ui->TOF_widget->savePdf(filePath.toLatin1().data());
+            }
+
+        }else                //保存直方图
+        {
+            if("bmp" == formatStr)
+            {
+                ui->Histogram_widget->saveBmp(filePath.toLatin1().data());
+            }else if("jpg" == formatStr)
+            {
+                ui->Histogram_widget->saveJpg(filePath.toLatin1().data());
+            }else if("png" == formatStr)
+            {
+                ui->Histogram_widget->savePng(filePath.toLatin1().data());
+            }else if("pdf" == formatStr)
+            {
+                ui->Histogram_widget->savePdf(filePath.toLatin1().data());
+            }
+        }
+    }else
+    {
+        return ;
     }
+
 }
 
 
