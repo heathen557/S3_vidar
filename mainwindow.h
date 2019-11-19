@@ -65,7 +65,9 @@ public:
 
     bool isTranslateFlag;     //解析数据 还是直接显示16进制的 切换标识 true：则对数据进行解析
 
-    int Count_num;            //显示记录的条数
+    int Count_num;            //每秒显示记录的条数
+
+    int allCountNum;
 
     int Count_num_lastSec;    //上一秒钟收到记录的条数
 

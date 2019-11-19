@@ -44,6 +44,7 @@ void receSerial_msg::openOrCloseSerial_slot(bool flag)
     {
         serial->close();
         emit returnLinkInfo_signal("close",true);
+        m_buffer.clear();
     }
 
 }
@@ -74,7 +75,7 @@ void receSerial_msg::readDataSlot()
             }
         }
         strHex = strHex.toUpper();
-        qDebug()<<" strHex = "<<strHex;
+//        qDebug()<<" strHex = "<<strHex;
 //        return;
 
         m_buffer.append(strHex);
@@ -113,15 +114,18 @@ void receSerial_msg::readDataSlot()
                if(!msgCheck(single_Data))
                     return;
 
+//               qDebug()<<" singlw_data = "<<single_Data;
                int TOF,PEAK;
                QString DataStr = single_Data.mid(12,len);      //去掉前面的4个字节
-               for(int k=0; k<len/4; k++)                      //K代表有几组数据
+               for(int k=0; k<lenStr.toInt(NULL,16)/4; k++)                      //K代表有几组数据
                {
                    QString TofString = DataStr.mid(k*12+3,2) + DataStr.mid(k*12,2);             //12代表4个字节的长度
                    QString PeakString = DataStr.mid(k*12+9,2) + DataStr.mid(k*12+6,2);
 
                    TOF = TofString.toInt(NULL,16);
                    PEAK =PeakString.toInt(NULL,16);
+
+//                   qDebug()<<"srcTOF = "<<TOF<<"  srcPeak="<<PEAK;
 
                    //sample_range 样本的个数
                    //向每个点的容器中添加一个新的点,完成循环存储
@@ -135,51 +139,21 @@ void receSerial_msg::readDataSlot()
                }
 
 
-//               //获取角度信息
-//               QString angle_str_ = single_Data.mid(12,5);
-//               angle_str_ = angle_str_.replace(" ", "");
-//               QString s1=angle_str_[0];
-//               QString s2=angle_str_[1];
-//               QString s3=angle_str_[2];
-//               QString s4=angle_str_[3];
-//               QString angle_str = s3+s4+s1+s2;
-//               int TOF = angle_str.toInt(NULL,16);
-//    //           qDebug()<<"TOF = "<<TOF;
-
-//               //获取距离信息(mm)
-//               QString distance_str_ = single_Data.mid(18,5);
-//               distance_str_ = distance_str_.replace(" ", "");
-//               s1=distance_str_[0];
-//               s2=distance_str_[1];
-//               s3=distance_str_[2];
-//               s4=distance_str_[3];
-//               QString distance_str = s3+s4+s1+s2;
-//               int PEAK = distance_str.toInt(NULL,16);
-//    //           qDebug()<<"PEAK = "<<PEAK;
-
-
-//               //sample_range 样本的个数
-//               //向每个点的容器中添加一个新的点,完成循环存储
-//               int offset = tofPeak_vector.size() - 2*sample_range;
-//               if(offset >= 0)
-//               {
-//                   tofPeak_vector.erase(tofPeak_vector.begin(),tofPeak_vector.begin()+offset + 2);    //减去两个本身就存在的点
-//               }
-//               tofPeak_vector.push_back(TOF);
-//               tofPeak_vector.push_back(PEAK);
-
-
                //对样本的tof、peak取均值
                int sum_tof = 0;
                int sum_peak = 0;
                int len1 = tofPeak_vector.size();
+//               qDebug()<<" len1 = "<<len1;
                for(int ii=0; ii<len1; ii+=2)
                {
                    sum_tof += tofPeak_vector[ii];
                    sum_peak += tofPeak_vector[ii+1];
                }
-               TOF = sum_tof/(len/2);
-               PEAK = sum_peak/(sum_peak/2);
+               TOF = sum_tof/(len1/2);
+               PEAK = sum_peak/(len1/2);
+
+//               qDebug()<<"meanTOF = "<<TOF<<"  meanPeak="<<PEAK;
+
 
                float result = (TOF - tof_offset) *ratio;
                result = result<0 ? 0:result;
@@ -239,6 +213,9 @@ void receSerial_msg::readDataSlot()
     }
 }
 
+
+
+//字节校验 从第二个字节开始，到倒数第二个字节 求和并取反 判断是否与最后一个字节相等
 bool receSerial_msg::msgCheck(QString msg)
 {
     int len = msg.length();
@@ -257,8 +234,6 @@ bool receSerial_msg::msgCheck(QString msg)
     {
         return false;
     }
-
-
 
 //    QString str1 = msg.mid(3,2);
 //    QString str2 = msg.mid(6,2);

@@ -81,7 +81,7 @@ void MainWindow::initConnect()
 
 }
 
-
+//统计显示相关窗口的初始化
 void MainWindow::initStatisticUI()
 {
     QString demoName = "Histogram";//实例名称
@@ -491,6 +491,7 @@ void MainWindow::on_PeakSet_off_radioButton_clicked()
 //接收处理数据线程数据的槽函数
 void MainWindow::dealedData_slot(QString currTof,vector<double> plotData, vector<double> StatisticData)
 {
+
     DistanceStrCurrent = currTof;
 
     PlotData_vector = plotData;           //plot相关
@@ -498,7 +499,7 @@ void MainWindow::dealedData_slot(QString currTof,vector<double> plotData, vector
     StatisticData_vector = StatisticData;      //统计相关
 }
 
-//定时器的槽函数
+//50ms定时器的槽函数
 void MainWindow::showTimerSlot()
 {
     //显示当前的距离
@@ -523,11 +524,10 @@ void MainWindow::showTimerSlot()
     //text_BOX上面的数据显示   分为显示解析后的TOF数据 或者16进制的数据  ;看是否需要判断 isTranslateFlag
     for(int i=0 ;i<DistanceStr.length();i++ )
     {
-        Count_num++;
-        ui->ResultHistory_textEdit->append(DistanceStr[i]);
+        ui->ResultHistory_textEdit->appendPlainText(DistanceStr[i]);
     }
     DistanceStr.clear();    //清空暂存的变量
-    ui->HistoryData_label->setText(QString::number(Count_num));   //显示记录条数
+    ui->HistoryData_label->setText(QString::number(allCountNum));   //显示记录条数
 
 }
 
@@ -557,6 +557,13 @@ void MainWindow::on_save_pushButton_clicked()
     QString text = ui->ResultHistory_textEdit->toPlainText();
 
     QString sFilePath = ui->savePath_lineEdit->text() ;
+    if(sFilePath.isEmpty())
+    {
+        QMessageBox::information(NULL,QStringLiteral("提示"),QStringLiteral("请先选择文件保存路径"));
+        return;
+    }
+
+
     QDateTime currTime = QDateTime::currentDateTime();
     QString fileName = currTime.toString("yyyyMMdd_hh_mm_ss");
     fileName.append(".txt");
@@ -577,13 +584,19 @@ void MainWindow::on_save_pushButton_clicked()
 //接收串口处理线程发送来的用于界面上显示的字符串连接
 void MainWindow::showResultMsg_slot(QStringList DisStr)
 {
-    DistanceStr = DisStr;
+    Count_num++;
+
+    allCountNum++;
+
+    DistanceStr.append(DisStr);
+
 }
 
 //每秒钟刷新的槽函数
 void MainWindow::oneSecondTimer_slot()
 {
-    int dps = Count_num - Count_num_lastSec;
+//    int dps = Count_num - Count_num_lastSec;
+    int dps = Count_num;
     if(dps > 0)
     {
         ui->DPS_label->setText(QString::number(dps));
@@ -591,7 +604,8 @@ void MainWindow::oneSecondTimer_slot()
     {
         ui->DPS_label->setText("0");
     }
-    Count_num_lastSec = Count_num;
+//    Count_num_lastSec = Count_num;
+    Count_num = 0;
 
 
     if(isTimelySaveFlag)     //60s存一帧数据
@@ -623,6 +637,14 @@ void MainWindow::oneSecondTimer_slot()
 //TimeingSave_checkBox的点击的槽函数
 void MainWindow::on_TimingSave_checkBox_clicked()
 {
+    QString sFilePath = ui->savePath_lineEdit->text();
+    if(sFilePath.isEmpty())
+    {
+        QMessageBox::information(NULL,QStringLiteral("提示"),QStringLiteral("请先选择文件保存路径"));
+        ui->TimingSave_checkBox->setChecked(false);
+        return;
+    }
+
     if(ui->TimingSave_checkBox->isChecked())
     {
         isTimelySaveFlag = true;
@@ -672,7 +694,7 @@ void MainWindow::on_withPeak_radioButton_clicked()
     ui->groupBox_6->setEnabled(true);
 }
 
-//显示TOF的统计信息
+//显示TOF的统计信息   刷新频率为20ms
 void MainWindow::on_TOF_radioButton_clicked()
 {
     if(plotShowTimer.isActive())
@@ -681,16 +703,14 @@ void MainWindow::on_TOF_radioButton_clicked()
 
     plot_type = 0;
     ui->stackedWidget->setCurrentIndex(0);
-
-
 }
 
-//显示统计直方图   由于耗时严重，由专门的线程进行处理
+//显示统计直方图   由于耗时严重，由专门的线程进行处理 直方图定时器为300ms
 void MainWindow::on_Histogram_radioButton_clicked()
 {
     if(plotShowTimer.isActive())
         plotShowTimer.stop();
-    plotShowTimer.start(200);      //定时器改为200ms进行一次刷新
+    plotShowTimer.start(300);      //定时器改为300ms进行一次刷新
 
     plot_type = 1;
     ui->stackedWidget->setCurrentIndex(1);
@@ -723,6 +743,7 @@ void MainWindow::plotShowTimer_slot()
 
     float labelMax = 0;
     float valueMax = 0;
+    float valueMin = 100000;
     if(plot_Mode)   //用户选中了显示统计信息的模式
     {
         if(0 == plot_type)          //显示tof的统计信息
@@ -735,12 +756,13 @@ void MainWindow::plotShowTimer_slot()
                 label_x[i] = i;
                 tofValue[i] = PlotData_vector[i];
 
+                valueMin = valueMin>tofValue[i] ? tofValue[i]:valueMin;
                 valueMax = valueMax>tofValue[i] ? valueMax:tofValue[i];    //统计tof的最大值，方便显示
             }
             labelMax = PlotData_vector.size();
 
             ui->TOF_widget->xAxis->setRange(0,labelMax);
-            ui->TOF_widget->yAxis->setRange(0,valueMax+10);
+            ui->TOF_widget->yAxis->setRange(valueMin-10,valueMax+10);
             ui->TOF_widget->graph(0)->setData(label_x,tofValue);
             ui->TOF_widget->replot();
 
@@ -748,27 +770,28 @@ void MainWindow::plotShowTimer_slot()
         }else if(1 == plot_type)    //显示直方图的信息
         {
 
-            index++;
-            vector<double> vec(20000);
-            for(int i=0; i<8000; i++)
-                vec[i] = 1.9;
+//            index++;
+//            vector<double> vec(20000);
+//            for(int i=0; i<8000; i++)
+//                vec[i] = 1.9;
 
-            if(index%11==0)
-            {
-                for(int i=0; i<20000; i++)
-                    vec[i] = 100;
-            }
-            vec.push_back(2.2);
-            vec.push_back(1.1);
-            vec.push_back(2.1);
-            vec.push_back(2.1);
-            vec.push_back(2.2);
-            vec.push_back(1.1);
-            vec.push_back(3.3);
-            vec.push_back(2.1);
-            vec.push_back(3.3);
-//            emit calHistogram_signal(PlotData_vector);
-            emit calHistogram_signal(vec);
+//            if(index%11==0)
+//            {
+//                for(int i=0; i<20000; i++)
+//                    vec[i] = 100;
+//            }
+//            vec.push_back(2.2);
+//            vec.push_back(1.1);
+//            vec.push_back(2.1);
+//            vec.push_back(2.1);
+//            vec.push_back(2.2);
+//            vec.push_back(1.1);
+//            vec.push_back(3.3);
+//            vec.push_back(2.1);
+//            vec.push_back(3.3);
+//            emit calHistogram_signal(vec);
+            emit calHistogram_signal(PlotData_vector);
+
         }
     }
 }

@@ -24,13 +24,13 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QToolBox>
 #include <QtWidgets/QToolButton>
@@ -108,7 +108,6 @@ public:
     QLabel *DPS_label;
     QSpacerItem *horizontalSpacer;
     QCheckBox *Transform_checkBox;
-    QTextEdit *ResultHistory_textEdit;
     QHBoxLayout *horizontalLayout_3;
     QLabel *label_5;
     QCheckBox *TimingSave_checkBox;
@@ -122,6 +121,7 @@ public:
     QLineEdit *timeInnterval_lineEdit;
     QSpacerItem *horizontalSpacer_6;
     QPushButton *clear_pushButton;
+    QPlainTextEdit *ResultHistory_textEdit;
     QGroupBox *groupBox_2;
     QGridLayout *gridLayout_12;
     QHBoxLayout *horizontalLayout_2;
@@ -504,12 +504,6 @@ public:
 
         gridLayout->addLayout(horizontalLayout, 0, 0, 1, 1);
 
-        ResultHistory_textEdit = new QTextEdit(groupBox);
-        ResultHistory_textEdit->setObjectName(QStringLiteral("ResultHistory_textEdit"));
-        ResultHistory_textEdit->setStyleSheet(QStringLiteral("font: 9pt \"Times New Roman\";"));
-
-        gridLayout->addWidget(ResultHistory_textEdit, 1, 0, 1, 1);
-
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setSpacing(6);
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
@@ -584,6 +578,13 @@ public:
         horizontalLayout_4->setStretch(3, 5);
 
         gridLayout->addLayout(horizontalLayout_4, 4, 0, 1, 1);
+
+        ResultHistory_textEdit = new QPlainTextEdit(groupBox);
+        ResultHistory_textEdit->setObjectName(QStringLiteral("ResultHistory_textEdit"));
+        ResultHistory_textEdit->setStyleSheet(QString::fromUtf8("font: 9pt \"Source Code Pro\";\n"
+"font: 9pt \"\351\273\221\344\275\223\";"));
+
+        gridLayout->addWidget(ResultHistory_textEdit, 1, 0, 1, 1);
 
         splitter->addWidget(groupBox);
         groupBox_2 = new QGroupBox(splitter);
