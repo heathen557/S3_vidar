@@ -182,12 +182,12 @@ void receSerial_msg::readDataSlot()
                if(peak_disp_mode)   //显示tof 和peak的值
                {
 //                   QString tofpeakStr = DistanceStrCurrent.append( QString("%1").arg(PEAK,8,10,QChar(' ')) );
-                   QString tofPeakStr = DistanceStrCurrent + "       " +QString::number(PEAK) +"\r\n";     //加入换行字符
+                   QString tofPeakStr = DistanceStrCurrent + "       " +QString::number(PEAK) /*+"\n"*/;     //加入换行字符
                    DistanceStr.append(tofPeakStr);
 
                }else            //只显示tof的值
                {
-                   QString tmpStr = DistanceStrCurrent + "\r\n";    //加入换行字符
+                   QString tmpStr = DistanceStrCurrent /*+ "\n"*/;    //加入换行字符
                    DistanceStr.append(tmpStr);
                }
 

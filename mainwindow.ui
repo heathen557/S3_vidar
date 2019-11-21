@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Vidar S3</string>
+   <string>S3 结果显示助手</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -52,7 +52,7 @@ font: 10pt &quot;Times New Roman&quot;;}</string>
 font: 11pt &quot;Times New Roman&quot;;}</string>
         </property>
         <attribute name="label">
-         <string>          Custom Setting</string>
+         <string>            基本设置</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_11" rowstretch="6,5,2,5,3">
          <item row="0" column="0">
@@ -62,7 +62,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
 {font: 10pt &quot;Times New Roman&quot;;}</string>
            </property>
            <property name="title">
-            <string>SerialPort Settings:</string>
+            <string>串口设置：</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
             <item row="0" column="0">
@@ -70,7 +70,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item row="0" column="0">
                <widget class="QLabel" name="label_10">
                 <property name="text">
-                 <string>Port：</string>
+                 <string>串口号：</string>
                 </property>
                </widget>
               </item>
@@ -80,7 +80,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item row="1" column="0">
                <widget class="QLabel" name="label_8">
                 <property name="text">
-                 <string>Baudrate：</string>
+                 <string>波特率：</string>
                 </property>
                </widget>
               </item>
@@ -90,7 +90,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item row="2" column="0">
                <widget class="QLabel" name="label_11">
                 <property name="text">
-                 <string>DataBits：</string>
+                 <string>数据位：</string>
                 </property>
                </widget>
               </item>
@@ -100,7 +100,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item row="3" column="0">
                <widget class="QLabel" name="label_7">
                 <property name="text">
-                 <string>StopBits：</string>
+                 <string>停止位：</string>
                 </property>
                </widget>
               </item>
@@ -110,7 +110,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item row="4" column="0">
                <widget class="QLabel" name="label_9">
                 <property name="text">
-                 <string>Parity：</string>
+                 <string>校验位：</string>
                 </property>
                </widget>
               </item>
@@ -120,14 +120,14 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item row="5" column="0">
                <widget class="QPushButton" name="portScan_pushButton">
                 <property name="text">
-                 <string>PortScan</string>
+                 <string>串口检测</string>
                 </property>
                </widget>
               </item>
               <item row="5" column="1">
                <widget class="QPushButton" name="openPort_pushButton">
                 <property name="text">
-                 <string>OpenPort</string>
+                 <string>打开串口</string>
                 </property>
                </widget>
               </item>
@@ -143,7 +143,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
 {font: 10pt &quot;Times New Roman&quot;;}</string>
            </property>
            <property name="title">
-            <string>Result:</string>
+            <string>结果显示:</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
             <item row="0" column="0">
@@ -151,7 +151,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item>
                <widget class="QLabel" name="label_12">
                 <property name="text">
-                 <string>CurrentDistance:(mm)</string>
+                 <string>当前距离:(mm)</string>
                 </property>
                </widget>
               </item>
@@ -168,7 +168,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item>
                <widget class="QLabel" name="label_14">
                 <property name="text">
-                 <string>Mean(1000 Samples):</string>
+                 <string>近1000次结果均值：</string>
                 </property>
                </widget>
               </item>
@@ -185,7 +185,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item>
                <widget class="QLabel" name="label_16">
                 <property name="text">
-                 <string>Std(1000 Samples):</string>
+                 <string>近1000次结果标准差：</string>
                 </property>
                </widget>
               </item>
@@ -211,13 +211,13 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
 {font: 10pt &quot;Times New Roman&quot;;}</string>
            </property>
            <property name="title">
-            <string>Data Phase:</string>
+            <string>字符相位:</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_6">
             <item row="0" column="0">
              <widget class="QPushButton" name="offsetOneByte_pushButton">
               <property name="text">
-               <string>Offset One Byte</string>
+               <string>偏移一字节</string>
               </property>
              </widget>
             </item>
@@ -226,14 +226,14 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
               <item>
                <widget class="QRadioButton" name="noPeak_radioButton">
                 <property name="text">
-                 <string>no peak</string>
+                 <string>无peak值</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QRadioButton" name="withPeak_radioButton">
                 <property name="text">
-                 <string>with peak</string>
+                 <string>有peak值</string>
                 </property>
                 <property name="checked">
                  <bool>true</bool>
@@ -252,7 +252,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
 {font: 10pt &quot;Times New Roman&quot;;}</string>
            </property>
            <property name="title">
-            <string>Disp Set:</string>
+            <string>显示设置:</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_9">
             <property name="topMargin">
@@ -264,7 +264,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupBox_7">
               <property name="title">
-               <string>Peak Disp:</string>
+               <string>Peak值显示:</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_7">
                <property name="topMargin">
@@ -276,7 +276,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
                <item row="0" column="0">
                 <widget class="QRadioButton" name="PeakSet_on_radioButton">
                  <property name="text">
-                  <string>On</string>
+                  <string>显示</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -286,7 +286,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
                <item row="0" column="1">
                 <widget class="QRadioButton" name="PeakSet_off_radioButton">
                  <property name="text">
-                  <string>Off</string>
+                  <string>隐藏</string>
                  </property>
                 </widget>
                </item>
@@ -296,7 +296,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
             <item row="1" column="0">
              <widget class="QGroupBox" name="groupBox_8">
               <property name="title">
-               <string>Plot Set:</string>
+               <string>画图功能:</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_8">
                <property name="topMargin">
@@ -308,14 +308,14 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
                <item row="0" column="0">
                 <widget class="QRadioButton" name="plotSet_on_radioButton">
                  <property name="text">
-                  <string>On</string>
+                  <string>开</string>
                  </property>
                 </widget>
                </item>
                <item row="0" column="1">
                 <widget class="QRadioButton" name="plotSet_off_radioButton">
                  <property name="text">
-                  <string>Off</string>
+                  <string>关</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -404,7 +404,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
 {font: 10pt &quot;Times New Roman&quot;;}</string>
        </property>
        <property name="title">
-        <string>Result History</string>
+        <string>结果记录</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
@@ -412,7 +412,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>History Data:</string>
+             <string>已记录数据:</string>
             </property>
            </widget>
           </item>
@@ -487,7 +487,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
           <item>
            <widget class="QCheckBox" name="Transform_checkBox">
             <property name="text">
-             <string>Transform</string>
+             <string>转换</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -501,14 +501,14 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
           <item>
            <widget class="QLabel" name="label_5">
             <property name="text">
-             <string>save Path:</string>
+             <string>保存文件路径</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="TimingSave_checkBox">
             <property name="text">
-             <string>Timing Save</string>
+             <string>定时保存</string>
             </property>
            </widget>
           </item>
@@ -546,14 +546,14 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
           <item>
            <widget class="QPushButton" name="save_pushButton">
             <property name="text">
-             <string>Save</string>
+             <string>保存</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="timeInnterval_label">
             <property name="text">
-             <string>time innterval(S):</string>
+             <string>时间间隔(S):</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -586,7 +586,7 @@ font: 11pt &quot;Times New Roman&quot;;}</string>
           <item>
            <widget class="QPushButton" name="clear_pushButton">
             <property name="text">
-             <string>clear</string>
+             <string>清空</string>
             </property>
            </widget>
           </item>
@@ -608,7 +608,7 @@ font: 9pt &quot;黑体&quot;;</string>
 {font: 10pt &quot;Times New Roman&quot;;}</string>
        </property>
        <property name="title">
-        <string>Plot</string>
+        <string>画图</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_12">
         <item row="0" column="0">
@@ -616,7 +616,7 @@ font: 9pt &quot;黑体&quot;;</string>
           <item>
            <widget class="QRadioButton" name="TOF_radioButton">
             <property name="text">
-             <string>TOF</string>
+             <string>TOF图</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -639,7 +639,7 @@ font: 9pt &quot;黑体&quot;;</string>
           <item>
            <widget class="QRadioButton" name="Histogram_radioButton">
             <property name="text">
-             <string>Histogram</string>
+             <string>直方图</string>
             </property>
            </widget>
           </item>
@@ -684,7 +684,7 @@ font: 9pt &quot;黑体&quot;;</string>
           <item>
            <widget class="QPushButton" name="savePicture_pushButton">
             <property name="text">
-             <string>SavePicture</string>
+             <string>图片保存</string>
             </property>
            </widget>
           </item>

@@ -10,8 +10,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    initUILanguage();
 
-    ui->ResultHistory_textEdit->document()->setMaximumBlockCount(100000);    //最多显示10000行，滑动存储  10w
+
+
+    ui->groupBox_5->setEnabled(false);
+
+    ui->ResultHistory_textEdit->document()->setMaximumBlockCount(7000);    //最多显示10000行，滑动存储  10w
 
     qRegisterMetaType<vector<double>>("vector<double>");   //注册函数
     qRegisterMetaType<vector<int>>("vector<int>");       //注册函数
@@ -60,6 +65,14 @@ MainWindow::MainWindow(QWidget *parent) :
     initConnect();
 
 }
+
+//语言的初始化
+void MainWindow::initUILanguage()
+{
+//    ui->groupBox_3->setTitle(QStringLiteral("串口设置"));
+}
+
+
 
 void MainWindow::initConnect()
 {
@@ -158,7 +171,7 @@ void MainWindow::initStatisticUI()
 
 void MainWindow::beginTimer()
 {
-    showTimer.start(50);
+    showTimer.start(90);
     oneSecondTimer.start(1000);
 }
 
@@ -263,7 +276,7 @@ void MainWindow::initSerial()
 //打开串口
 void MainWindow::on_openPort_pushButton_clicked()
 {
-    if(ui->openPort_pushButton->text() == "OpenPort")
+    if(ui->openPort_pushButton->text() == QStringLiteral("打开串口"))
     {
         currentSettings.name = ui->serialPortInfoListBox->currentText();
 
@@ -382,7 +395,7 @@ void MainWindow::returnLinkInfo_slot(QString str, bool flag)
              ui->dataBitsBox->setEnabled(false);
              ui->parityBox->setEnabled(false);
              ui->stopBitsBox->setEnabled(false);
-             ui->openPort_pushButton->setText("ClosePort");
+             ui->openPort_pushButton->setText(QStringLiteral("关闭串口"));
              beginTimer();
         }else
         {
@@ -394,7 +407,7 @@ void MainWindow::returnLinkInfo_slot(QString str, bool flag)
         {
             isLinked = false;
             stopTimer();
-            ui->openPort_pushButton->setText("OpenPort");
+            ui->openPort_pushButton->setText(QStringLiteral("打开串口"));
             ui->serialPortInfoListBox->setEnabled(true);
             ui->baudRateBox->setEnabled(true);
             ui->dataBitsBox->setEnabled(true);
@@ -675,7 +688,7 @@ void MainWindow::on_clear_pushButton_clicked()
 {
 
     ui->ResultHistory_textEdit->clear();
-    Count_num = 0;
+    allCountNum = 0;
 }
 
 
@@ -694,12 +707,12 @@ void MainWindow::on_withPeak_radioButton_clicked()
     ui->groupBox_6->setEnabled(true);
 }
 
-//显示TOF的统计信息   刷新频率为20ms
+//显示TOF的统计信息   刷新频率为50ms
 void MainWindow::on_TOF_radioButton_clicked()
 {
     if(plotShowTimer.isActive())
         plotShowTimer.stop();
-    plotShowTimer.start(20);
+    plotShowTimer.start(70);
 
     plot_type = 0;
     ui->stackedWidget->setCurrentIndex(0);
@@ -710,7 +723,7 @@ void MainWindow::on_Histogram_radioButton_clicked()
 {
     if(plotShowTimer.isActive())
         plotShowTimer.stop();
-    plotShowTimer.start(300);      //定时器改为300ms进行一次刷新
+    plotShowTimer.start(370);      //定时器改为300ms进行一次刷新
 
     plot_type = 1;
     ui->stackedWidget->setCurrentIndex(1);
@@ -769,27 +782,6 @@ void MainWindow::plotShowTimer_slot()
 
         }else if(1 == plot_type)    //显示直方图的信息
         {
-
-//            index++;
-//            vector<double> vec(20000);
-//            for(int i=0; i<8000; i++)
-//                vec[i] = 1.9;
-
-//            if(index%11==0)
-//            {
-//                for(int i=0; i<20000; i++)
-//                    vec[i] = 100;
-//            }
-//            vec.push_back(2.2);
-//            vec.push_back(1.1);
-//            vec.push_back(2.1);
-//            vec.push_back(2.1);
-//            vec.push_back(2.2);
-//            vec.push_back(1.1);
-//            vec.push_back(3.3);
-//            vec.push_back(2.1);
-//            vec.push_back(3.3);
-//            emit calHistogram_signal(vec);
             emit calHistogram_signal(PlotData_vector);
 
         }
